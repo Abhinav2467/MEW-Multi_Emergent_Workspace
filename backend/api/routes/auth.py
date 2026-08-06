@@ -6,10 +6,11 @@ from typing import Any
 
 import aiosqlite
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.security import HTTPAuthorizationCredentials
 
-from backend.api.deps import get_current_user
+from backend.api.deps import get_current_user, security
 from backend.auth.google_oauth import build_auth_url, exchange_code_for_tokens
-from backend.auth.jwt import create_access_token
+from backend.auth.jwt import create_access_token, decode_access_token
 from backend.models.schemas import AuthUrlResponse, TokenResponse, UserOut
 from backend.storage.database import get_db
 from backend.storage.repositories import UserRepository
@@ -61,21 +62,25 @@ async def me(user: dict[str, Any] = Depends(get_current_user)) -> UserOut:
     return _user_out(user)
 
 
-from backend.api.deps import get_current_user, get_current_user_optional
-
-
 @router.get("/active-session")
 async def active_session(
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
     conn: aiosqlite.Connection = Depends(get_db),
 ) -> dict[str, Any]:
-    """Check if an active authenticated user session exists in SQLite database."""
-    if not user or not user.get("id"):
-        return {"authenticated": False, "user": None, "access_token": None}
+    """Check if an active authenticated user session exists strictly via Bearer JWT token."""
+    if credentials is not None and credentials.scheme.lower() == "bearer":
+        try:
+            payload = decode_access_token(credentials.credentials)
+            user_id = int(payload["sub"])
+            user = await UserRepository(conn).get_by_id(user_id)
+            if user:
+                token = create_access_token(user_id=user["id"], email=user["email"])
+                return {
+                    "authenticated": True,
+                    "access_token": token,
+                    "user": _user_out(user),
+                }
+        except Exception:
+            pass
 
-    token = create_access_token(user_id=user["id"], email=user["email"])
-    return {
-        "authenticated": True,
-        "access_token": token,
-        "user": _user_out(user),
-    }
+    return {"authenticated": False, "user": None, "access_token": None}
