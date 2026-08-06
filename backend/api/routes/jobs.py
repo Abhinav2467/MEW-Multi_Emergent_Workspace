@@ -459,15 +459,15 @@ async def record_job_application(
 
 @router.get("/api/v1/jobs/applications")
 async def list_user_applications(
-    user: dict[str, Any] | None = Depends(get_current_user_optional),
+    user: Any = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """List applications strictly isolated for the currently logged in user."""
     try:
-        user_id = user["id"] if user else 1
+        user_id = user["id"] if isinstance(user, dict) and "id" in user else 1
         repo = AppliedJobRepository(conn)
         apps = await repo.list_for_user(user_id)
-        return {"status": "success", "user_id": user_id, "user_email": user.get("email") if user else None, "data": apps}
+        return {"status": "success", "user_id": user_id, "user_email": user.get("email") if isinstance(user, dict) else None, "data": apps}
     except Exception as exc:
         print(f"[Error] list_user_applications failed: {exc}")
         return {"status": "success", "user_id": 1, "user_email": None, "data": []}
@@ -476,7 +476,7 @@ async def list_user_applications(
 @router.post("/api/v1/jobs/mark-cold-email-sent")
 async def mark_cold_email_sent(
     payload: dict[str, Any],
-    user: dict[str, Any] | None = Depends(get_current_user_optional),
+    user: Any = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Mark cold email as sent for a job position for the currently logged in user."""

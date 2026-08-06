@@ -324,18 +324,18 @@ async def public_upload_resume(
 
 @router.get("/api/v1/resume/history")
 async def get_resume_history(
-    user: dict[str, Any] | None = Depends(get_current_user_optional),
+    user: Any = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
     try:
-        user_id = user["id"] if user else 1
+        user_id = user["id"] if isinstance(user, dict) and "id" in user else 1
         repo = ResumeHistoryRepository(conn)
         history = await repo.list_for_user(user_id)
         return {
             "status": "success",
             "user_id": user_id,
-            "user_email": user.get("email") if user else None,
+            "user_email": user.get("email") if isinstance(user, dict) else None,
             "data": history,
         }
     except Exception as exc:
