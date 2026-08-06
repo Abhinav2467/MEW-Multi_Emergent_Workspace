@@ -410,23 +410,6 @@ class DraftRepository:
         await self.conn.commit()
 
 
-class AppliedJobRepository:
-    def __init__(self, conn: aiosqlite.Connection) -> None:
-        self.conn = conn
-
-    async def record_application(
-        self,
-        *,
-        user_id: int,
-        company_name: str,
-        position: str,
-        apply_link: str,
-        location: str | None = None,
-        matching_percentage: int = 0,
-        relevant_skills: str | None = None,
-        hr_recruiter_name: str | None = None,
-        hr_recruiter_email: str | None = None,
-        cold_email_sent: bool = False,
 def _row_to_dict(row: Any) -> dict[str, Any]:
     if not row:
         return {}
@@ -453,7 +436,6 @@ class AppliedJobRepository:
         matching_percentage: int = 0,
         relevant_skills: str | None = None,
         hr_recruiter_name: str | None = None,
-        hr_recruiter_email: str | None = None,
         cold_email_sent: bool = False,
     ) -> dict[str, Any]:
         cursor = await self.conn.execute(
