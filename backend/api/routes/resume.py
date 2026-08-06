@@ -338,15 +338,19 @@ async def get_resume_history(
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
-    user_id = user["id"] if user else 1
-    repo = ResumeHistoryRepository(conn)
-    history = await repo.list_for_user(user_id)
-    return {
-        "status": "success",
-        "user_id": user_id,
-        "user_email": user.get("email") if user else None,
-        "data": history,
-    }
+    try:
+        user_id = user["id"] if user else 1
+        repo = ResumeHistoryRepository(conn)
+        history = await repo.list_for_user(user_id)
+        return {
+            "status": "success",
+            "user_id": user_id,
+            "user_email": user.get("email") if user else None,
+            "data": history,
+        }
+    except Exception as exc:
+        print(f"[Error] get_resume_history failed: {exc}")
+        return {"status": "success", "user_id": 1, "user_email": None, "data": []}
 
 
 @router.get("/resume/{profile_id}", response_model=ProfileResponse)

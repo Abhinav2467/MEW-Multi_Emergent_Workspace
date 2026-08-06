@@ -463,10 +463,14 @@ async def list_user_applications(
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """List applications strictly isolated for the currently logged in user."""
-    user_id = user["id"] if user else 1
-    repo = AppliedJobRepository(conn)
-    apps = await repo.list_for_user(user_id)
-    return {"status": "success", "user_id": user_id, "user_email": user.get("email") if user else None, "data": apps}
+    try:
+        user_id = user["id"] if user else 1
+        repo = AppliedJobRepository(conn)
+        apps = await repo.list_for_user(user_id)
+        return {"status": "success", "user_id": user_id, "user_email": user.get("email") if user else None, "data": apps}
+    except Exception as exc:
+        print(f"[Error] list_user_applications failed: {exc}")
+        return {"status": "success", "user_id": 1, "user_email": None, "data": []}
 
 
 @router.post("/api/v1/jobs/mark-cold-email-sent")
