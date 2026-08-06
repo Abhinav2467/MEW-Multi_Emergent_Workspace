@@ -22,6 +22,6 @@ COPY . .
 RUN mkdir -p backend/data backend/reports backend/data/resumes
 
 ENV PYTHONPATH=/app
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["python", "-m", "backend.main"]
