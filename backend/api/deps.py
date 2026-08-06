@@ -56,8 +56,12 @@ async def get_current_user_optional(
         except Exception:
             pass
 
-    user = await UserRepository(conn).get_active_or_first_user()
-    if user:
-        return user
+    try:
+        user = await UserRepository(conn).get_active_or_first_user()
+        if user:
+            return user
+    except Exception:
+        pass
+
     return {"id": 1, "email": "candidate@mew.ai", "name": "Guest Candidate"}
 
