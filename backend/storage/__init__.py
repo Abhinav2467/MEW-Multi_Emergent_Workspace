@@ -21,10 +21,22 @@ async def connect() -> aiosqlite.Connection:
     return conn
 
 
-async def get_db():
-    """FastAPI dependency yielding a DB connection."""
+from fastapi import Request
+
+
+async def get_db(request: Request):
+    """FastAPI dependency yielding a DB connection, reusing request.state.db if already open."""
+    if hasattr(request.state, "db") and request.state.db is not None:
+        yield request.state.db
+        return
+
     conn = await connect()
+    request.state.db = conn
     try:
         yield conn
     finally:
-        await conn.close()
+        try:
+            await conn.close()
+        except Exception:
+            pass
+        request.state.db = None
