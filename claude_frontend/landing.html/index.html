@@ -2067,7 +2067,12 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             // 3. Local saved state fallback
             if (!autoAuth && window.MewAppState.user && window.MewAppState.user.isAuthenticated) {
-                autoAuth = true;
+                if (!storedToken) {
+                    window.MewAppState.user.isAuthenticated = false;
+                    window.MewAppState.save();
+                } else {
+                    autoAuth = true;
+                }
             }
 
             if (autoAuth) {
@@ -2076,13 +2081,18 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 MewRouter.navigateTo(target === 'landing' ? 'parser' : target);
                 return true;
             }
+            MewRouter.navigateTo('landing');
             return false;
         }
 
         function logoutUser() {
             localStorage.removeItem('mew_jwt_token');
             localStorage.removeItem('mew_app_state');
+            if (window.MewApiClient) window.MewApiClient.token = '';
             window.MewAppState.user.isAuthenticated = false;
+            window.MewAppState.user.name = '';
+            window.MewAppState.user.email = '';
+            window.MewAppState.activeView = 'landing';
             window.MewAppState.save();
             MewRouter.syncUI();
             MewRouter.navigateTo('landing');
