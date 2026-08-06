@@ -113,5 +113,13 @@ async def run_migrations(conn: aiosqlite.Connection) -> None:
         await conn.execute("ALTER TABLE users ADD COLUMN google_refresh_token TEXT")
     except Exception:
         pass
+
+    cursor = await conn.execute("SELECT COUNT(*) FROM users")
+    count = (await cursor.fetchone())[0]
+    if count == 0:
+        await conn.execute(
+            "INSERT INTO users (id, google_id, email, name) VALUES (1, 'default_candidate_001', 'candidate@mew.ai', 'Candidate User')"
+        )
     await conn.commit()
+
 
