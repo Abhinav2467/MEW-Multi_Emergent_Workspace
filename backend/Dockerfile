@@ -28,6 +28,9 @@ COPY . .
 # Create persistent data directories (Railway mounts a volume here)
 RUN mkdir -p backend/data backend/reports backend/data/resumes
 
+# Ensure /app is in python path for absolute imports (from backend.xyz import ...)
+ENV PYTHONPATH=/app
+
 # Expose default port (Railway overrides via $PORT env var)
 EXPOSE 8000
 
