@@ -5,8 +5,10 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+import traceback
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from backend.api.routes import auth, autofill, emails, jobs, resume
 from backend.config import get_settings
@@ -44,6 +46,15 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request: Request, exc: Exception):
+        tb = traceback.format_exc()
+        print(f"[CRITICAL ERROR] Unhandled Exception on {request.url.path}: {exc}\n{tb}")
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "path": str(request.url.path), "error": str(exc), "traceback": tb.splitlines()[-5:]},
+        )
 
     app.include_router(auth.router)
     app.include_router(resume.router)
