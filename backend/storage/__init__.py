@@ -12,6 +12,8 @@ from backend.config import get_settings
 async def connect() -> aiosqlite.Connection:
     settings = get_settings()
     db_path = Path(settings.database_path)
+    if db_path.is_dir():
+        db_path = db_path / "app.db"
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = await aiosqlite.connect(str(db_path))
     conn.row_factory = aiosqlite.Row
