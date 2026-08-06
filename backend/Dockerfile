@@ -1,37 +1,27 @@
-# ── Stage 1: build dependencies ──────────────────────────────────────────────
-FROM python:3.11-slim AS builder
-
-WORKDIR /app
-
-# System deps needed to compile some Python packages (e.g. PyMuPDF, cryptography)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libffi-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY backend/requirements.txt ./requirements.txt
-RUN pip install --upgrade pip && \
-    pip install --prefix=/install --no-cache-dir -r requirements.txt
-
-# ── Stage 2: runtime image ────────────────────────────────────────────────────
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy installed packages from builder
-COPY --from=builder /install /usr/local
+# System dependencies for compiling native packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy entire repo (backend + any shared modules it imports)
+# Copy requirements and install python packages
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy application source
 COPY . .
 
-# Create persistent data directories (Railway mounts a volume here)
+# Create persistent data directories
 RUN mkdir -p backend/data backend/reports backend/data/resumes
 
-# Ensure /app is in python path for absolute imports (from backend.xyz import ...)
 ENV PYTHONPATH=/app
-
-# Expose default port (Railway overrides via $PORT env var)
 EXPOSE 8000
 
 CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
