@@ -1971,8 +1971,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             window.MewApiClient.token = data.access_token;
                         }
                         if (data.user) {
-                            window.MewAppState.user.email = data.user.email || 'alex@mewai.dev';
-                            window.MewAppState.user.name = data.user.name || 'Alex Rivera';
+                            window.MewAppState.user.email = data.user.email || '';
+                            window.MewAppState.user.name = data.user.name || '';
                         }
                     }
                 } catch (e) { console.warn('Backend code verification error', e); }
@@ -2130,9 +2130,9 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             queue.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
-                    <span class="material-symbols-outlined text-2xl text-outline">cloud_off</span>
-                    <p class="font-bold text-xs text-on-surface">Offline Mode</p>
-                    <p class="text-[11px] text-on-surface-variant">Connect to backend to view past uploads.</p>
+                    <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
+                    <p class="font-bold text-xs text-on-surface">No Resumes Uploaded Yet</p>
+                    <p class="text-[11px] text-on-surface-variant">Upload a PDF/DOCX resume above to parse.</p>
                 </div>`;
         }
 
