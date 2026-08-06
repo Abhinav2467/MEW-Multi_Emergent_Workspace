@@ -427,6 +427,34 @@ class AppliedJobRepository:
         hr_recruiter_name: str | None = None,
         hr_recruiter_email: str | None = None,
         cold_email_sent: bool = False,
+def _row_to_dict(row: Any) -> dict[str, Any]:
+    if not row:
+        return {}
+    try:
+        if hasattr(row, "keys"):
+            return {str(k): row[k] for k in row.keys()}
+        return dict(row)
+    except Exception:
+        return {}
+
+
+class AppliedJobRepository:
+    def __init__(self, conn: aiosqlite.Connection) -> None:
+        self.conn = conn
+
+    async def record_application(
+        self,
+        *,
+        user_id: int,
+        company_name: str,
+        position: str,
+        apply_link: str = "#",
+        location: str | None = None,
+        matching_percentage: int = 0,
+        relevant_skills: str | None = None,
+        hr_recruiter_name: str | None = None,
+        hr_recruiter_email: str | None = None,
+        cold_email_sent: bool = False,
     ) -> dict[str, Any]:
         cursor = await self.conn.execute(
             """
@@ -489,7 +517,7 @@ class AppliedJobRepository:
             "SELECT * FROM applied_jobs WHERE id = ?", (app_id,)
         )
         row = await cursor.fetchone()
-        return dict(row) if row else None
+        return _row_to_dict(row) if row else None
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
         try:
@@ -498,19 +526,10 @@ class AppliedJobRepository:
                 (user_id,),
             )
             rows = await cursor.fetchall()
-            return [dict(r) for r in rows]
-        except Exception:
-            try:
-                from backend.storage.migrations import run_migrations
-                await run_migrations(self.conn)
-                cursor = await self.conn.execute(
-                    "SELECT * FROM applied_jobs WHERE user_id = ? ORDER BY id DESC",
-                    (user_id,),
-                )
-                rows = await cursor.fetchall()
-                return [dict(r) for r in rows]
-            except Exception:
-                return []
+            return [_row_to_dict(r) for r in rows if r]
+        except Exception as exc:
+            print(f"[Warning] list_for_user applied_jobs exception: {exc}")
+            return []
 
     async def update_cold_email_status(
         self,
@@ -599,18 +618,9 @@ class ResumeHistoryRepository:
                 (user_id,),
             )
             rows = await cursor.fetchall()
-            return [dict(r) for r in rows]
-        except Exception:
-            try:
-                from backend.storage.migrations import run_migrations
-                await run_migrations(self.conn)
-                cursor = await self.conn.execute(
-                    "SELECT * FROM resume_history WHERE user_id = ? ORDER BY id DESC",
-                    (user_id,),
-                )
-                rows = await cursor.fetchall()
-                return [dict(r) for r in rows]
-            except Exception:
-                return []
+            return [_row_to_dict(r) for r in rows if r]
+        except Exception as exc:
+            print(f"[Warning] list_for_user resume_history exception: {exc}")
+            return []
 
 
