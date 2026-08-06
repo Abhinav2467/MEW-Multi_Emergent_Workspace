@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Project MEW — Job Application Autofill",
+  "version": "1.0.0",
+  "description": "AI-powered job form autofilling with synthetic event dispatching for Workday, Greenhouse, Lever, and live career portals.",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": ["<all_urls>", "http://localhost:8000/*", "http://127.0.0.1:8000/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Project MEW Autofill"
+  }
+}

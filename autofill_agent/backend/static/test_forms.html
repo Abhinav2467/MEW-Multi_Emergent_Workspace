@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project MEW — Chrome Extension Autofill Test Suite</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { color: #38bdf8; font-size: 24px; margin-bottom: 8px; }
+    .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    .action-bar { display: flex; gap: 12px; align-items: center; background: #1e293b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155; }
+    .autofill-btn { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 14px; transition: background 0.2s; }
+    .autofill-btn:hover { background: #7dd3fc; }
+    .bookmarklet-btn {
+      background: linear-gradient(135deg, #a855f7, #38bdf8);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: grab;
+    }
+    .bookmarklet-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+    .api-key-input { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #38bdf8; font-family: monospace; font-size: 13px; box-sizing: border-box; }
+    .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #334155; }
+    .tab-btn { background: #1e293b; color: #94a3b8; border: none; padding: 10px 18px; cursor: pointer; border-radius: 6px 6px 0 0; }
+    .tab-btn.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+    .form-card { background: #1e293b; padding: 24px; border-radius: 8px; border: 1px solid #334155; display: none; }
+    .form-card.active { display: block; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-size: 14px; color: #cbd5e1; }
+    input, textarea, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #f8fafc; box-sizing: border-box; }
+    .log-panel { margin-top: 30px; background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 16px; }
+    .log-title { font-size: 14px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; }
+    #event-log { font-family: monospace; font-size: 12px; max-height: 180px; overflow-y: auto; color: #4ade80; margin: 0; padding: 0; list-style: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Project MEW — Chrome Extension Autofill Test Suite</h1>
+    <div class="subtitle">Simulate content script form detection, API payload fetching, and synthetic event dispatching.</div>
+
+    <div class="action-bar">
+      <a href="javascript:(function(){if(window.__mew_injected){const b=document.getElementById('mew-autofill-badge');if(b)b.click();return;}window.__mew_injected=true;const s=document.createElement('script');s.src='http://127.0.0.1:8000/static/mew_bookmarklet.js';document.body.appendChild(s);})();" class="bookmarklet-btn" title="Drag this link to your Chrome/Safari Bookmarks Bar for 1-click autofill on any job application!">
+        ✨ Drag to Bookmarks Bar: MEW Autofill
+      </a>
+      <button class="autofill-btn" onclick="triggerSimulatedAutofill()">✨ Simulate Extension Autofill</button>
+    </div>
+
+    <!-- API Key Configuration Section -->
+    <div class="config-card" style="background: #1e293b; padding: 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
+      <h3 style="margin-top:0; color:#38bdf8; font-size:16px;">🔑 API Keys & Gemini AI Configuration</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div>
+          <label style="font-size:12px; color:#cbd5e1;">MEW Backend API Key (X-MEW-Api-Key):</label>
+          <input type="text" id="api-key" class="api-key-input" placeholder="mew_sk_...">
+        </div>
+        <div>
+          <label style="font-size:12px; color:#cbd5e1;">Google Gemini API Key (GOOGLE_API_KEY):</label>
+          <input type="password" id="gemini-key" class="api-key-input" placeholder="AIzaSy...">
+        </div>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <button class="autofill-btn" onclick="saveGeminiKeyFromUI()">Save Gemini Key</button>
+        <span id="key-save-status" style="margin-left: 12px; font-size: 13px; color: #4ade80;"></span>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab(1)">1. Standard App</button>
+      <button class="tab-btn" onclick="showTab(2)">2. React State</button>
+      <button class="tab-btn" onclick="showTab(3)">3. Custom QA</button>
+      <button class="tab-btn" onclick="showTab(4)">4. Multi-Step Wizard</button>
+      <button class="tab-btn" onclick="showTab(5)">5. Shadow DOM</button>
+      <button class="tab-btn" onclick="showTab(6); loadApplicationsTable();">📋 Applied Jobs Tracker</button>
+    </div>
+
+    <!-- Form 1 -->
+    <div id="form-1" class="form-card active">
+      <h3>Scenario 1: Standard Job Application</h3>
+      <form>
+        <div class="form-group"><label>First Name</label><input type="text" name="first_name" id="first_name" autocomplete="given-name"></div>
+        <div class="form-group"><label>Last Name</label><input type="text" name="last_name" id="last_name" autocomplete="family-name"></div>
+        <div class="form-group"><label>Email Address</label><input type="email" name="email" id="email" autocomplete="email"></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" name="phone" id="phone" autocomplete="tel"></div>
+      </form>
+    </div>
+
+    <!-- Form 2 -->
+    <div id="form-2" class="form-card">
+      <h3>Scenario 2: React Controlled Inputs</h3>
+      <div class="form-group"><label>Full Name (React Binding)</label><input type="text" id="react-name" placeholder="John Doe"></div>
+      <div class="form-group"><label>LinkedIn Profile URL</label><input type="url" id="react-linkedin" placeholder="https://linkedin.com/in/username"></div>
+    </div>
+
+    <!-- Form 3 -->
+    <div id="form-3" class="form-card">
+      <h3>Scenario 3: Custom QA & Ambiguous Fields</h3>
+      <div class="form-group"><label>Total years of Python experience?</label><input type="number" id="custom-py-years" placeholder="e.g. 5"></div>
+      <div class="form-group"><label>Are you willing to relocate?</label><input type="text" id="custom-relocate" placeholder="Yes / No"></div>
+    </div>
+
+    <!-- Form 4 -->
+    <div id="form-4" class="form-card">
+      <h3>Scenario 4: Multi-Step Application Wizard (Step 1)</h3>
+      <div class="form-group"><label>Current Job Title</label><input type="text" id="wizard-title"></div>
+    </div>
+
+    <!-- Form 5 -->
+    <div id="form-5" class="form-card">
+      <h3>Scenario 5: Encapsulated Shadow DOM Form</h3>
+      <div id="shadow-host"></div>
+    </div>
+
+    <!-- Form 6 -->
+    <div id="form-6" class="form-card">
+      <h3 style="color:#38bdf8;">📋 Live Applied Jobs Tracker Log</h3>
+      <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13px;">
+        <thead>
+          <tr style="background:#0f172a; color:#38bdf8; text-align:left;">
+            <th style="padding:10px; border:1px solid #334155;">Company</th>
+            <th style="padding:10px; border:1px solid #334155;">Job Title</th>
+            <th style="padding:10px; border:1px solid #334155;">Status</th>
+            <th style="padding:10px; border:1px solid #334155;">Timestamp</th>
+            <th style="padding:10px; border:1px solid #334155;">URL</th>
+          </tr>
+        </thead>
+        <tbody id="applications-table-body">
+          <tr><td colspan="5" style="padding:12px; text-align:center; color:#94a3b8;">Loading logged applications...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Event Monitor -->
+    <div class="log-panel">
+      <div class="log-title">DOM Event Monitor Log (Simulated Synthetic Events)</div>
+      <ul id="event-log"><li>[System] Ready to capture input, change, focus, and blur events...</li></ul>
+    </div>
+  </div>
+
+  <script>
+    function showTab(num) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === num - 1));
+      document.querySelectorAll('.form-card').forEach((f, i) => f.classList.toggle('active', i === num - 1));
+    }
+
+    // Attach Event Monitor
+    ['focus', 'input', 'change', 'blur'].forEach(eventType => {
+      document.addEventListener(eventType, (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+          const log = document.getElementById('event-log');
+          const li = document.createElement('li');
+          li.textContent = `[${new Date().toLocaleTimeString()}] Event: '${eventType}' on #${e.target.id || e.target.name || 'field'} | Value: "${e.target.value}"`;
+          log.prepend(li);
+        }
+      }, true);
+    });
+
+    // Shadow DOM Setup
+    const host = document.getElementById('shadow-host');
+    if (host) {
+      const root = host.attachShadow({mode: 'open'});
+      root.innerHTML = `<style>label{color:#cbd5e1;display:block;margin-bottom:6px;}input{width:100%;padding:10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#fff;}</style><div><label>Portfolio / Personal Website (Inside Shadow DOM)</label><input type="url" id="shadow-portfolio"></div>`;
+    }
+
+    // Helper: Fill element and fire synthetic events
+    function fillAndDispatch(el, val) {
+      if (!el) return;
+      el.value = val;
+      ['focus', 'input', 'change', 'blur'].forEach(evtType => {
+        el.dispatchEvent(new Event(evtType, { bubbles: true }));
+      });
+    }
+
+    async function saveGeminiKeyFromUI() {
+      const geminiKey = document.getElementById('gemini-key').value.trim();
+      const statusEl = document.getElementById('key-save-status');
+      if (!geminiKey) {
+        alert('Please paste a valid Google Gemini API Key!');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/auth/keys', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ google_api_key: geminiKey })
+        });
+        const json = await res.json();
+        if (json.status === 'success') {
+          statusEl.textContent = '✅ Gemini API Key Saved!';
+          setTimeout(() => { statusEl.textContent = ''; }, 4000);
+        } else {
+          alert('Failed to save key: ' + JSON.stringify(json));
+        }
+      } catch (e) {
+        alert('Error saving key: ' + e);
+      }
+    }
+
+    async function triggerSimulatedAutofill() {
+      const apiKey = document.getElementById('api-key').value.trim();
+      let profile;
+
+      if (apiKey) {
+        try {
+          const res = await fetch('/api/v1/autofill-payload', { headers: { 'X-MEW-Api-Key': apiKey } });
+          const json = await res.json();
+          if (json.status === 'success') {
+            profile = json.data;
+          } else {
+            alert('API Error: ' + JSON.stringify(json));
+            return;
+          }
+        } catch (e) {
+          alert('Failed to connect to API: ' + e);
+          return;
+        }
+      } else {
+        const res = await fetch('/autofill/preview');
+        const json = await res.json();
+        profile = json.data.active_profile;
+      }
+
+      const p = profile.personal || {};
+      const prof = profile.professional || {};
+      const qa = profile.custom_qa || {};
+
+      // Fill Form 1
+      fillAndDispatch(document.getElementById('first_name'), p.first_name || '');
+      fillAndDispatch(document.getElementById('last_name'), p.last_name || '');
+      fillAndDispatch(document.getElementById('email'), p.email || '');
+      fillAndDispatch(document.getElementById('phone'), p.phone || '');
+
+      // Fill Form 2
+      fillAndDispatch(document.getElementById('react-name'), p.full_name || '');
+      fillAndDispatch(document.getElementById('react-linkedin'), p.linkedin_url || '');
+
+      // Fill Form 3
+      fillAndDispatch(document.getElementById('custom-py-years'), prof.years_experience || '');
+      fillAndDispatch(document.getElementById('custom-relocate'), qa.willing_to_relocate || '');
+
+      // Fill Form 4
+      fillAndDispatch(document.getElementById('wizard-title'), prof.current_title || '');
+
+      // Fill Form 5 (Shadow DOM)
+      if (host && host.shadowRoot) {
+        fillAndDispatch(host.shadowRoot.getElementById('shadow-portfolio'), p.portfolio_url || '');
+      }
+    }
+
+    async function loadApplicationsTable() {
+      const tbody = document.getElementById('applications-table-body');
+      try {
+        const res = await fetch('/api/v1/applications');
+        const json = await res.json();
+        const apps = json.data || [];
+        if (apps.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="padding:12px; text-align:center; color:#94a3b8;">No applications logged yet. Click "✨ MEW Autofill" on any job portal to auto-apply and log!</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = apps.map(a => `
+          <tr style="border-bottom: 1px solid #334155;">
+            <td style="padding:10px; font-weight:bold; color:#f8fafc;">${a.company}</td>
+            <td style="padding:10px; color:#cbd5e1;">${a.job_title}</td>
+            <td style="padding:10px;"><span style="background:#065f46; color:#34d399; padding:4px 8px; border-radius:12px; font-weight:bold; font-size:11px;">${a.status}</span></td>
+            <td style="padding:10px; color:#94a3b8; font-size:12px;">${new Date(a.timestamp || Date.now()).toLocaleString()}</td>
+            <td style="padding:10px;"><a href="${a.url}" target="_blank" style="color:#38bdf8; text-decoration:none;">Open Portal ↗</a></td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:12px; text-align:center; color:#f87171;">Failed to load applications: ${e}</td></tr>`;
+      }
+    }
+  </script>
+</body>
+</html>

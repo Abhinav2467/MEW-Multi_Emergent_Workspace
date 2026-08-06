@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ record.person_name }}</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+  </head>
+  <body>
+    <main class="layout detail">
+      <nav class="nav"><a href="/">Back</a></nav>
+      <header class="topbar">
+        <div>
+          <h1>{{ record.person_name }}</h1>
+          <p>Version {{ record.version_number }} &middot; {{ record.duplicate_status }} &middot; {{ record.updated_at.strftime("%Y-%m-%d %H:%M") }}</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="/resumes/{{ record.id }}/file">Open resume</a>
+          <form method="post" action="/resumes/{{ record.id }}/delete" onsubmit="return confirm('Remove this resume entry and stored file?');">
+            <button class="danger-button" type="submit">Remove</button>
+          </form>
+        </div>
+      </header>
+      <section class="grid">
+        <div class="panel">
+          <h2>Details</h2>
+          <dl>
+            <dt>Target role</dt>
+            <dd>{{ record.target_role or "Not set" }}</dd>
+            <dt>Original file</dt>
+            <dd>{{ record.original_filename }}</dd>
+            <dt>Vector status</dt>
+            <dd>{{ record.vector_indexing_status }}</dd>
+          </dl>
+        </div>
+        <div class="panel">
+          <h2>JSON</h2>
+          <pre>{{ record.parsed_json | tojson(indent=2) }}</pre>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-parser-agent"
+version = "0.1.0"
+description = "Resume parsing agent with Telegram, duplicate detection, and dashboard workflow."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic==2.13.4",
+    "pydantic-settings==2.14.1",
+    "aiosqlite==0.22.1",
+    "fastapi==0.136.3",
+    "google-genai==2.6.0",
+    "jinja2==3.1.6",
+    "pymupdf==1.27.2.3",
+    "python-docx==1.2.0",
+    "python-telegram-bot==22.7",
+    "qdrant-client==1.18.0",
+    "sentence-transformers==5.5.1",
+    "uvicorn==0.48.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "pytest-asyncio==1.3.0",
+    "pytest-cov==7.1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+resume_parser_agent = [
+    "dashboard/templates/*.html",
+    "dashboard/static/*.css",
+    "dashboard/static/*.js",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["resume_parser_agent"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80

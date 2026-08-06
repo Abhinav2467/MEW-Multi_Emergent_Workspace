@@ -1,0 +1,55 @@
+{
+  "personal": {
+    "first_name": "K",
+    "last_name": "P Videsh Kumaar",
+    "full_name": "K P Videsh Kumaar",
+    "email": "videshkumaar@gmail.com",
+    "phone": "+91-7892568001",
+    "linkedin_url": "linkedin.com/in/kp-videsh-kumaar-39b001167",
+    "github_url": "github.com/K-P-Videsh-Kumaar",
+    "portfolio_url": "",
+    "location": "Bengaluru, India"
+  },
+  "professional": {
+    "current_title": "GENAI Intern",
+    "primary_skills": [
+      "Python",
+      "C++",
+      "SQL",
+      "FastAPI",
+      "LangChain",
+      "Scikit-learn",
+      "Streamlit",
+      "Machine Learning",
+      "Deep Learning",
+      "NLP",
+      "Prompt Engineering",
+      "ChromaDB",
+      "HuggingFace Embeddings",
+      "Pandas",
+      "NumPy",
+      "Jupyter",
+      "n8n",
+      "Generative AI",
+      "Mistral AI",
+      "Tavily Search",
+      "Tavily API",
+      "BeautifulSoup",
+      "TF-IDF",
+      "Bag of Words",
+      "LLMs",
+      "SAP AI Core",
+      "SAP AI Launchpad",
+      "SAP Generative AI Hub",
+      "SAP Business Technology Platform",
+      "add"
+    ],
+    "years_experience": 0.25,
+    "summary": "K P Videsh Kumaar\nvideshkumaar@gmail.com | +91-7892568001 |\nlinkedin.com/in/kp-videsh-kumaar-39b001167 |\ngithub.com/K-P-Videsh-Kumaar\nSummary\nAspiring AI Engineer and Data Science student with experience in Generative AI, NLP, FastAPI, and\nbackend development through internship and project work. Skilled in building machine learning workflows,\nAI-driven applications, and document-based AI systems with a strong foundation in problem-solving and\ndata-driven development.\nEducation\nNew Horizon College of Engineering\n2023 \u2013 Present\nB.E. in Computer Science\nCGPA: 9.41\nSkills\nLanguages: Python, C++, SQL\nFrameworks/Libraries: FastAPI, LangChain, Scikit-learn, Streamlit\nAI/ML: Machine Learning, Deep Learning, NLP, Prompt Engineering\nTools: ChromaDB, HuggingFace Embeddings, Pandas, NumPy, Jupyter, n8n\nExperience\nGENAI Intern, Innomatics Research Labs\nFeb 2026 \u2013 May 2026\n\u2022 Developed backend APIs using Python and FastAPI to support AI-driven applications.\n\u2022 Applied NLP techniques for real-world tasks and data workflows.\n\u2022 Performed Exploratory Data Analysis (EDA) and contributed to machine learning workflows.\n\u2022 Explored workflow structuring and basic model deployment practices.\nProjects\nNexus Multi-Agent Research System\nAgentic AI Project\n\u2022 Developed a multi-agent research platform using LangChain, Mistral AI, and Tavily Search to\nautomate topic research and report generation.\n\u2022 Designed specialized AI agents for web search, content scraping, report writing, and quality critique within\nan end-to-end research workflow.\n\u2022 Integrated Tavily API and BeautifulSoup for real-time information retrieval and web content extraction.\n\u2022 Built an interactive Streamlit application for generating structured research reports with downloadable\noutputs.\nCourse Mate AI\nAI Learning Assistant\n\u2022 Developed an AI system that retrieves and generates responses strictly from provided source materials.\n\u2022 Used LangChain, ChromaDB, Mistral AI, and HuggingFace embeddings for document retrieval\nand response generation.\n\u2022 Implemented chunking and prompt templates to improve contextual retrieval and reduce hallucinations.\nSentiment Analysis on Twitter Dataset\nMachine Learning Project\n\u2022 Built a sentiment classification model achieving 94% accuracy.\n\u2022 Performed data cleaning, feature extraction, and model optimization.\n\u2022 Used TF-IDF, Bag of Words, and multiple Machine Learning models for sentiment classification.\nCar Rental System Backend\nBackend Development Project\n\u2022 Designed backend modules for booking, inventory, and user management.\n\u2022 Optimized SQL queries to improve response time and efficiency.\nCertifications\nSAP Certified \u2013 SAP Generative AI Developer\nJul 2026 \u2013 Jul 2027\nCertified in developing Generative AI applications on SAP Business Technology Platform (BTP), leveraging\nLarge Language Models (LLMs), SAP AI Core, SAP AI Launchpad, and SAP Generative AI Hub.\nSymposium on Data for Public Good \u2013 IISc\nAttended\nExplored real-world applications of data science for public policy and societal impact.\nAchievements\nWalmart Sparkathon Participant\nVirtual Hackathon\nCollaborated on AI-driven solutions focused on redefining customer experience using Generative AI concepts."
+  },
+  "custom_qa": {
+    "willing_to_relocate": "Yes",
+    "work_authorization": "Authorized to work"
+  },
+  "resume_file_path": "/Users/abhi_2467/aura_folder\u2728/job_applying_agent/backend/data/resumes/Videsh_Resume (1).pdf"
+}

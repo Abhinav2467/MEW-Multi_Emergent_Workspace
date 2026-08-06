@@ -1,0 +1,7 @@
+# Cold Email Agent Requirements
+langchain-groq>=0.2.0
+google-api-python-client>=2.150.0
+google-auth-oauthlib>=1.2.0
+tavily-python>=0.5.0
+pyhunter>=1.7
+python-dotenv>=1.0.0

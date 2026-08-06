@@ -1,0 +1,23 @@
+# Project: J-Vers Hero + Preloader Replica
+# This is a front-end (HTML/CSS/JS) project, not Python — listed here in
+# requirements.txt format as requested. Install via npm, not pip.
+#
+# npm install gsap@3.12.5 lenis@1.1.13
+#
+# ---- Core animation & scroll ----
+gsap==3.12.5                 # Timelines, ScrollTrigger, text mask reveals
+gsap-scrolltrigger==3.12.5   # Bundled with gsap, used for scroll-linked hero fade
+lenis==1.1.13                # Smooth scroll (formerly @studio-freight/lenis)
+
+# ---- Build tooling (optional, if not going static HTML/CSS/JS) ----
+vite==5.4.0                  # Fast dev server + bundler
+typescript==5.6.0            # Optional, if converting to TS
+
+# ---- Fonts (self-hosted, verify exact family via DevTools first) ----
+# Neue Montreal or General Sans as substitutes — see design.md section 7
+# Load via @font-face, not Google Fonts CDN, to match likely self-hosted setup
+
+# ---- Assets needed from source (not installable, gather manually) ----
+# - Hero background video(s) (.mp4, muted/loop/autoplay, ~1080p, compressed <5MB)
+# - Nav thumbnail images (Home/Cases/Career/Contact previews)
+# - Logo (SVG preferred)

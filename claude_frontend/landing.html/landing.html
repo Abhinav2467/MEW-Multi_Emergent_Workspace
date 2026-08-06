@@ -1,0 +1,275 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <style>
+        @layer base {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                overscroll-behavior: none;
+            }
+
+            main>:first-child {
+                margin-top: 0 !important;
+            }
+
+            main>:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+        id="tailwind-config">tailwind.config = { theme: { extend: { "colors": { "on-tertiary-fixed": "#002117", "on-secondary-container": "#0a7438", "secondary-fixed": "#99f7ac", "on-surface": "#1a1c1c", "primary-fixed": "#9cf0ff", "on-primary-container": "#00626e", "on-error": "#ffffff", "outline": "#6b7a7d", "on-background": "#1a1c1c", "inverse-surface": "#2f3131", "on-primary": "#ffffff", "surface-gray": "#F9FAFB", "tertiary-fixed-dim": "#abcebf", "surface-container-low": "#f3f3f4", "secondary": "#006d33", "primary-fixed-dim": "#00daf3", "on-secondary-fixed-variant": "#005225", "deep-forest": "#15362B", "background": "#f9f9f9", "tertiary-container": "#b4d8c8", "surface-container-lowest": "#ffffff", "on-primary-fixed": "#001f24", "secondary-fixed-dim": "#7eda92", "error-container": "#ffdad6", "surface-container-high": "#e8e8e8", "surface-variant": "#e2e2e2", "surface": "#f9f9f9", "tertiary": "#446558", "primary-container": "#00e5ff", "error": "#ba1a1a", "outline-variant": "#bac9cc", "on-surface-variant": "#3b494c", "inverse-on-surface": "#f0f1f1", "horizon-green": "#A1FFB3", "secondary-container": "#99f7ac", "on-secondary": "#ffffff", "surface-bright": "#f9f9f9", "on-primary-fixed-variant": "#004f58", "ink-black": "#0A0A0A", "on-error-container": "#93000a", "surface-container-highest": "#e2e2e2", "primary": "#006875", "kinetic-cyan": "#00E5FF", "surface-tint": "#006875", "tertiary-fixed": "#c6ebda", "on-tertiary-fixed-variant": "#2d4d41", "surface-container": "#eeeeee", "inverse-primary": "#00daf3", "on-tertiary-container": "#3e5f53", "on-secondary-fixed": "#00210b", "surface-dim": "#dadada", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "16px", "unit": "4px", "container-max-width": "1280px", "gutter": "24px", "margin-desktop": "64px" }, "fontFamily": { "display-lg-mobile": ["Hanken Grotesk"], "body-lg": ["Inter"], "label-md": ["JetBrains Mono"], "body-md": ["Inter"], "display-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "headline-sm": ["Hanken Grotesk"], "label-sm": ["JetBrains Mono"] }, "fontSize": { "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }] } } } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-surface-container-lowest font-body-md text-on-surface">
+    <aside
+        class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest z-50 flex flex-col border-r border-outline-variant">
+        <div class="h-16 px-6 flex items-center gap-3"><img alt="Mew Logo" class="h-8 w-auto object-contain"
+                src="https://lh3.googleusercontent.com/aida/AP1WRLunGfA3TCW93fKuoxyBHQqoUqbg6ioPUtYA_RklkL1MFtkC2bhv7AC4T6tY66sUrbbiwVYnNjxI_ccuWSJ8IKMnf73lr04SYPVvbErRPAtaL3U7cLI8HyV1H6NuEPpNVrtmTcrJmAJXyY28MhLbbTueAGnvWlDmCVZ8NOBiqtYc0pR7ULvkdG2Q2TDSlc3kPE7WwnqUMNdhgQOcQ3JJ9EN-blXYFDZ-9mbTvLAdap3JHSj2dmG4DgpcJ_M" /><span
+                class="font-headline-sm text-headline-sm text-primary">Mew</span></div>
+        <nav class="flex-1 px-4 mt-8 space-y-2"
+            data-active-classes="bg-secondary-container text-on-secondary-container font-semibold shadow-sm"><a
+                aria-current="page"
+                class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group bg-secondary-container text-on-secondary-container font-semibold shadow-sm"
+                data-path="dashboard" href="#"><span
+                    class="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">dashboard</span><span
+                    class="font-label-md text-label-md">Dashboard</span></a><a
+                class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-200 group"
+                data-path="parser" href="#"><span
+                    class="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">terminal</span><span
+                    class="font-label-md text-label-md">Parser</span></a><a
+                class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-200 group"
+                data-path="matches" href="#"><span
+                    class="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">compare_arrows</span><span
+                    class="font-label-md text-label-md">Matches</span></a>
+            <div class="pt-8 pb-2 px-4 uppercase text-[10px] font-bold text-outline tracking-widest">System</div><a
+                class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-200 group"
+                data-path="settings" href="#"><span
+                    class="material-symbols-outlined mr-4 group-hover:scale-110 transition-transform">settings</span><span
+                    class="font-label-md text-label-md">Settings</span></a>
+        </nav>
+    </aside>
+    <div class="pl-72">
+        <header
+            class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant z-40 flex items-center justify-between px-8">
+            <div class="flex items-center gap-4 text-on-surface-variant"><span
+                    class="material-symbols-outlined">search</span><span class="text-label-sm font-label-sm">Search
+                    documents...</span></div>
+            <div class="flex items-center gap-6"><button
+                    class="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span
+                        class="material-symbols-outlined text-on-surface-variant">notifications</span></button>
+                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-label-md font-label-md text-on-surface">Alex Rivera</p>
+                        <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-wider">Lead
+                            Analyst</p>
+                    </div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/10"
+                        src="https://lh3.googleusercontent.com/aida/AP1WRLtNfxEoEYhBCEpbE1IMZsRgq1U6LuCYyzJZg_Znt0fJHDBYpN3mLcFUX6yAVPmQyxXcOwdMDffeYVaYJOtkLizjySaDHt_wlCVtB8NlBUpIf0mDjG7PJRFZcwSTVsMOpzc36oTHpFvhr3kCpWySzLQI3k5IA5_7z91cjwB0hroP_a6TdupWul5DcmMYzGQcZWEdIlIX_MYpMNU-0AEVk1uzpygdjnKl3oUNbtnQPA6N-dN07NNWJ-jofjfW" />
+                </div>
+            </div>
+        </header>
+        <main class="relative pt-16 bg-surface-container-lowest min-h-screen">
+            <div class="flex flex-col w-full relative">
+                <section
+                    class="relative w-full overflow-hidden bg-surface-container-lowest pt-32 pb-48 flex items-center justify-center">
+                    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary-fixed/30 rounded-full blur-[100px]">
+                        </div>
+                        <div class="absolute top-20 -left-20 w-72 h-72 bg-secondary-fixed/30 rounded-full blur-[80px]">
+                        </div>
+                    </div>
+                    <div
+                        class="container-max-width mx-auto px-8 relative z-10 flex flex-col items-center justify-center text-center max-w-4xl">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-gray mb-8">
+                            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Mew
+                                AI V2 is Live</span>
+                        </div>
+                        <h1 class="font-display-lg text-display-lg text-on-surface mb-6 leading-tight">
+                            Upload your resume, let our <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">agents</span>
+                            find your future.
+                        </h1>
+                        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-12">
+                            Mew deploys autonomous AI agents that parse your skills, scour global opportunities, and
+                            negotiate matches on your behalf—all while you sleep.
+                        </p>
+                        <div
+                            class="w-full max-w-md mx-auto bg-surface-container-lowest rounded-2xl shadow-xl p-8 shadow-deep-forest/5 relative">
+                            <div class="absolute -top-4 -right-4 w-24 h-24 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtyJn85ePxb_isImf4VjLBxHlmRgPjPsDrp83dDvCH-V0dsLsuVXE8uRrfCOpRWpkITYcWmLYbKQPzIikKLTjDsYshkH500mu6EdG9wapLloIjxgYFey0wpLPgXG6kiLT8_BBizbWkyH6Z1wY2m-91AHLGAuYYg5TtTMLlQCNwKDdk2209bE4AkKRwNExRVHmQNM3r70KZv_RjbEFygXNEDraicI39uVV2Dnzezfn7u_2if2HXJxw7EcjQIgadoVPJ410')] bg-cover bg-center rounded-2xl shadow-lg opacity-20 pointer-events-none"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUyaScNzeFg6U8087peDoo36ETClpcY7lzeVFOoshFmt2jMcTtvDee-cw84UlJqTqc8zR__DWGxTt_TpmdmIIKifzdosLgKvLfVpGvyeZrUqz0uMQ17CyZwr2_s5PXUP3AD-Swj9FzbdrGPz3kKXJfew90S3OPdZ-2ww_BbQTCdmNuIVLvwoOzxhrUsniXP4fEX5KqgE3W1V0YaZcZTYLaxArn2sZiDAjl4vtzXMqIUIQOhj_19re5If7OXYUADV7to04')">
+                            </div>
+                            <form class="flex flex-col gap-4 relative z-10">
+                                <div class="relative">
+                                    <input
+                                        class="block w-full px-4 py-3 bg-surface-gray border-b-2 border-transparent focus:border-kinetic-cyan rounded-t-lg outline-none transition-colors peer font-body-md text-on-surface"
+                                        id="email" placeholder=" " type="email" />
+                                    <label
+                                        class="absolute left-4 top-3 text-on-surface-variant font-label-md transition-all peer-placeholder-shown:text-body-md peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-label-sm peer-focus:text-primary bg-surface-container-lowest px-1 rounded"
+                                        for="email">Work Email</label>
+                                </div>
+                                <div class="relative">
+                                    <input
+                                        class="block w-full px-4 py-3 bg-surface-gray border-b-2 border-transparent focus:border-kinetic-cyan rounded-t-lg outline-none transition-colors peer font-body-md text-on-surface"
+                                        id="password" placeholder=" " type="password" />
+                                    <label
+                                        class="absolute left-4 top-3 text-on-surface-variant font-label-md transition-all peer-placeholder-shown:text-body-md peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-label-sm peer-focus:text-primary bg-surface-container-lowest px-1 rounded"
+                                        for="password">Password</label>
+                                </div>
+                                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                                    <button
+                                        class="flex-1 bg-kinetic-cyan text-on-primary font-label-md py-3 px-6 rounded-lg hover:shadow-lg hover:shadow-kinetic-cyan/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                                        type="button">
+                                        Get Started
+                                    </button>
+                                    <button
+                                        class="flex-1 bg-transparent text-primary font-label-md py-3 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-gray transition-colors group"
+                                        type="button">
+                                        See how it works
+                                        <span
+                                            class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+                <section class="w-full bg-surface-gray py-32 relative">
+                    <div class="container-max-width mx-auto px-8 relative z-10">
+                        <div class="flex flex-col sm:flex-row justify-between items-end mb-16">
+                            <div class="max-w-xl">
+                                <h2 class="font-headline-md text-headline-md text-on-surface mb-4">The Autonomous
+                                    Advantage</h2>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Three pillars of
+                                    intelligent career advancement.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div
+                                class="bg-surface-container-lowest p-8 rounded-2xl shadow-md shadow-deep-forest/5 hover:shadow-xl hover:shadow-deep-forest/10 transition-shadow group">
+                                <div
+                                    class="w-12 h-12 bg-primary-fixed rounded-xl flex items-center justify-center mb-6 text-on-primary-fixed group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined"
+                                        style="font-variation-settings: 'FILL' 1;">terminal</span>
+                                </div>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Smart Parser</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-6">Extracts semantic
+                                    meaning from your resume, looking past keywords to understand your actual
+                                    capabilities.</p>
+                                <div class="w-full bg-surface-gray h-2 rounded-full overflow-hidden">
+                                    <div
+                                        class="h-full bg-gradient-to-r from-kinetic-cyan to-horizon-green w-3/4 rounded-full">
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-surface-container-lowest p-8 rounded-2xl shadow-md shadow-deep-forest/5 hover:shadow-xl hover:shadow-deep-forest/10 transition-shadow group md:-mt-8">
+                                <div
+                                    class="w-12 h-12 bg-secondary-fixed rounded-xl flex items-center justify-center mb-6 text-on-secondary-fixed group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined"
+                                        style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                                </div>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Autonomous Agents
+                                </h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-6">Persistent AI agents
+                                    continuously search, filter, and evaluate job boards 24/7 on your behalf.</p>
+                                <svg class="w-full h-8 text-secondary-fixed stroke-current" fill="none" stroke-width="2"
+                                    viewbox="0 0 100 20">
+                                    <path class="animate-[dash_2s_linear_infinite]" d="M0 10 Q 25 20, 50 10 T 100 10"
+                                        stroke-dasharray="100"></path>
+                                </svg>
+                            </div>
+                            <div
+                                class="bg-surface-container-lowest p-8 rounded-2xl shadow-md shadow-deep-forest/5 hover:shadow-xl hover:shadow-deep-forest/10 transition-shadow group">
+                                <div
+                                    class="w-12 h-12 bg-tertiary-fixed rounded-xl flex items-center justify-center mb-6 text-on-tertiary-fixed group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-outlined"
+                                        style="font-variation-settings: 'FILL' 1;">compare_arrows</span>
+                                </div>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Perfect Matches</h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-6">Proprietary matching
+                                    algorithm scores opportunities against your true potential and preferences.</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-label-md text-label-md text-primary">Match Rate</span>
+                                    <span
+                                        class="font-label-md text-label-md text-on-surface bg-horizon-green px-2 py-0.5 rounded">98%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="w-full bg-surface-container-lowest py-32">
+                    <div class="container-max-width mx-auto px-8">
+                        <div class="max-w-4xl mx-auto flex flex-col md:flex-row gap-12 items-center">
+                            <div
+                                class="flex-shrink-0 w-32 h-32 rounded-full overflow-hidden shadow-lg shadow-primary/20 relative">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="Close up portrait of a professional woman in her 30s smiling confidently. Soft, diffused lighting, clean white background, high contrast, optimistic mood."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6j15qJ0XxdTkomGRwy_qHdIAb0ykVVb_m1PWPCsWd2uxtttf7X3es5Ntu7v0lxqdP6XusnYWkIA9l8dDMm82Zy7fDoGnlXszADaPHH8Zm19FdJiOGoaqoedkYAvvdf03jtOWXm3OaX4TjFpeaqKPvrduggmgVL3DpNzhNhDMnfa2qoAllezDG0D2YhSKLIWOTopJzRC5unFY0gmdVgV4GUeGUI4MZTaSpssvO6avzqNWnoabiHKjjFA" />
+                                <div class="absolute inset-0 rounded-full ring-4 ring-surface-container-lowest"></div>
+                            </div>
+                            <div>
+                                <span
+                                    class="text-display-lg text-primary/20 font-serif leading-none absolute -ml-6 mt-4">"</span>
+                                <blockquote
+                                    class="font-headline-md text-headline-md text-on-surface mb-6 relative z-10 italic">
+                                    Mew felt like having an elite recruiting team working for me while I focused on my
+                                    current job. The match was uncanny.
+                                </blockquote>
+                                <p class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Jeet
+                                    Sarkar</p>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Collaborated with Abhinav,
+                                    Joshith and Videsh</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <footer class="w-full bg-surface-gray py-12">
+                    <div
+                        class="container-max-width mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div class="flex items-center gap-3">
+                            <span class="font-headline-sm text-headline-sm text-on-surface">Mew</span>
+                            <span class="text-on-surface-variant font-label-sm">© 2026 Mew Inc.</span>
+                        </div>
+                        <div class="flex gap-8">
+                            <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+                                href="#">Terms</a>
+                            <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+                                href="#">Privacy</a>
+                            <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+                                href="#">Support</a>
+                        </div>
+                    </div>
+                </footer>
+                <style>
+                    @keyframes dash {
+                        to {
+                            stroke-dashoffset: -100;
+                        }
+                    }
+                </style>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

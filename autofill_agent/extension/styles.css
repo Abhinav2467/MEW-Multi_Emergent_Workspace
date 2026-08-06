@@ -1,0 +1,73 @@
+#mew-autofill-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2147483647;
+  background: #0f172a;
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+#mew-autofill-badge:hover {
+  background: #38bdf8;
+  color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.5);
+}
+
+#mew-autofill-badge.mew-success {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+#mew-resume-pill {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  z-index: 2147483647;
+  background: #020617;
+  color: #fbbf24;
+  border: 1px dashed #fbbf24;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+}
+
+#mew-resume-pill:hover {
+  background: #fbbf24;
+  color: #020617;
+  transform: scale(1.05);
+}
+
+#mew-resume-pill:active {
+  cursor: grabbing;
+  opacity: 0.7;
+  transform: scale(0.97);
+}
+
+/* Visual highlight applied to file input dropzone areas when MEW pill is dragged over them */
+.mew-drop-target {
+  outline: 2.5px dashed #38bdf8 !important;
+  outline-offset: 3px !important;
+  background-color: rgba(56, 189, 248, 0.07) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+

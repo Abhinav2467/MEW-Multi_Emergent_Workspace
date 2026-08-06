@@ -1,0 +1,25 @@
+INFO:     Will watch for changes in these directories: ['/Users/abhi_2467/aura_folder✨/job_applying_agent']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [29202] using WatchFiles
+INFO:     Started server process [29216]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:55076 - "HEAD /api/v1/resume/download-latest HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:55077 - "GET /api/v1/resume/download-latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55087 - "GET /api/v1/resume/download-latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55089 - "GET /api/v1/resume/download-latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55091 - "GET /api/v1/resume/download-latest HTTP/1.1" 200 OK
+[Warning] AI matching LLM fallback to heuristic: Error calling model 'gemini-2.5-flash' (NOT_FOUND): 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use a newer model for the latest features and improvements.', 'status': 'NOT_FOUND'}}
+INFO:     127.0.0.1:55087 - "POST /api/v1/autofill-payload/match HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "OPTIONS /api/v1/jobs/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "GET /api/v1/jobs/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "GET /api/v1/jobs/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "GET /api/v1/jobs/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "GET /api/v1/jobs/recency-feed HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "OPTIONS /api/v1/jobs/apply HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55111 - "POST /api/v1/jobs/apply HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /api/v1/jobs/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /health/gemini HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /api/v1/resume/history HTTP/1.1" 200 OK

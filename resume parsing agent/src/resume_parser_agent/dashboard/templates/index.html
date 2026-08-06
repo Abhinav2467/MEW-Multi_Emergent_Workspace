@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resume Parser Dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+  </head>
+  <body>
+    <main class="layout">
+      <header class="topbar">
+        <div>
+          <h1>Parsed Resumes</h1>
+          <p>{{ records|length }} records</p>
+        </div>
+      </header>
+      <section class="list" aria-label="Parsed resumes">
+        {% for record in records %}
+          <div class="row">
+            <a class="row-link" href="/resumes/{{ record.id }}">
+              <span class="name">{{ record.person_name }}</span>
+              <span class="meta">v{{ record.version_number }} &middot; {{ record.duplicate_status }} &middot; {{ record.updated_at.strftime("%Y-%m-%d %H:%M") }}</span>
+            </a>
+            <form method="post" action="/resumes/{{ record.id }}/delete" onsubmit="return confirm('Remove this resume entry and stored file?');">
+              <button class="danger-button" type="submit">Remove</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="empty">No resumes parsed yet.</div>
+        {% endfor %}
+      </section>
+    </main>
+    <script src="/static/dashboard.js"></script>
+  </body>
+</html>

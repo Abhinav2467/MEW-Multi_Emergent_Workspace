@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        @layer base {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+            }
+
+            body {
+                overscroll-behavior: none;
+            }
+
+            main>:first-child {
+                margin-top: 0 !important;
+            }
+
+            main>:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes cardFanIn {
+            from {
+                opacity: 0;
+                scale: .94;
+            }
+
+            to {
+                opacity: 1;
+                scale: 1;
+            }
+        }
+
+        #card-stack>div {
+            animation: cardFanIn .7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        #card-stack>div:nth-child(1) {
+            animation-delay: .08s;
+        }
+
+        #card-stack>div:nth-child(2) {
+            animation-delay: .16s;
+        }
+
+        #card-stack>div:nth-child(3) {
+            animation-delay: .24s;
+        }
+
+        #card-stack>div:nth-child(4) {
+            animation-delay: .32s;
+        }
+
+        #card-stack>div:nth-child(5) {
+            animation-delay: .4s;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#00626e",
+                        "on-tertiary-fixed": "#002117",
+                        "on-tertiary-container": "#3e5f53",
+                        "on-primary-fixed": "#001f24",
+                        "tertiary-fixed-dim": "#abcebf",
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#0a7438",
+                        "primary-fixed-dim": "#00daf3",
+                        "surface-container": "#eeeeee",
+                        "surface-gray": "#F9FAFB",
+                        "outline-variant": "#bac9cc",
+                        "inverse-primary": "#00daf3",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006875",
+                        "on-primary": "#ffffff",
+                        "kinetic-cyan": "#00E5FF",
+                        "on-surface-variant": "#3b494c",
+                        "tertiary-fixed": "#c6ebda",
+                        "secondary": "#006d33",
+                        "primary-container": "#00e5ff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#00210b",
+                        "tertiary-container": "#b4d8c8",
+                        "inverse-on-surface": "#f0f1f1",
+                        "horizon-green": "#A1FFB3",
+                        "on-secondary-fixed-variant": "#005225",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed-dim": "#7eda92",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary": "#ffffff",
+                        "ink-black": "#0A0A0A",
+                        "on-surface": "#1a1c1c",
+                        "secondary-fixed": "#99f7ac",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#9cf0ff",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-tertiary-fixed-variant": "#2d4d41",
+                        "background": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "outline": "#6b7a7d",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#99f7ac",
+                        "primary": "#006875",
+                        "tertiary": "#446558",
+                        "deep-forest": "#15362B",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadada"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-max-width": "1280px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "headline-sm": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "headline-md": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "label-md": [
+                            "IBM Plex Mono"
+                        ],
+                        "body-md": [
+                            "Inter"
+                        ],
+                        "display-lg-mobile": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "label-sm": [
+                            "IBM Plex Mono"
+                        ],
+                        "body-lg": [
+                            "Inter"
+                        ]
+                    },
+                    "fontSize": {
+                        "display-lg": [
+                            "48px",
+                            {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                            }
+                        ],
+                        "headline-sm": [
+                            "24px",
+                            {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "headline-md": [
+                            "32px",
+                            {
+                                "lineHeight": "40px",
+                                "fontWeight": "700"
+                            }
+                        ],
+                        "label-md": [
+                            "14px",
+                            {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "body-md": [
+                            "16px",
+                            {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "display-lg-mobile": [
+                            "36px",
+                            {
+                                "lineHeight": "44px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                            }
+                        ],
+                        "label-sm": [
+                            "12px",
+                            {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "body-lg": [
+                            "18px",
+                            {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                            }
+                        ]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-surface-container-lowest font-body-md text-on-background">
+    <header
+        class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-surface-variant shadow-sm">
+        <div class="h-16 max-w-container-max-width mx-auto px-margin-desktop flex items-center justify-between">
+            <div class="flex items-center gap-gutter">
+                <div class="flex items-center gap-2"><img alt="Mew Logo" class="h-8 w-auto object-contain brightness-0"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lY6S7Y9HVG8JsmUlr_g0Ba4MyFUja5ttCtDfCdTXZonDaxJTt4DyuFy2-0sSnK-oInhJ-4C-9bbLuHrTAsoa225ABaix7flyiEFflUm9ZnNXli5OJp8kU1PAZYTVXGmHlW-l-ng7f5SDz71cg-b4a_8aM7pwIgIdsTGAVMmFSNH__lBljE7uIft8n4SoUJDfzfREQrA8wP4GIGiaDHC1ftocy2_dIZ2a3ice1lqrEu9gXNTI0cC0NA" /><span
+                        class="font-headline-sm text-primary tracking-tight">Mew</span></div>
+                <nav class="hidden md:flex items-center gap-gutter" data-active-classes="text-primary font-medium"><a
+                        aria-current="page" class="transition-colors text-primary font-medium" data-path="home"
+                        href="#">Home</a><a
+                        class="font-body-md text-on-surface-variant hover:text-on-surface transition-colors"
+                        data-path="parser" href="#">Parser</a><a
+                        class="font-body-md text-on-surface-variant hover:text-on-surface transition-colors"
+                        data-path="dashboard" href="#">Dashboard</a><a
+                        class="font-body-md text-on-surface-variant hover:text-on-surface transition-colors"
+                        data-path="matches" href="#">Matches</a></nav>
+            </div>
+            <div class="flex items-center gap-4"><button
+                    class="p-2 text-on-surface-variant hover:text-on-surface transition-colors"><span
+                        class="material-symbols-outlined">notifications</span></button><img alt="Profile"
+                    class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVtHJ5xvssoHqzP_bFAExjuf78jtyKvPQ4fZIfWEjrrIZrp3-T3IAzPkR6bg3ydza-00hY1IXDYe9oMwLyEHzePv7oCzE-IE57QBQJfk330rlbaSwvkYcELVQmRNQC4wfhheIeNUZ8xb7lPw2o3dVxvb8-_WRLIq18EAvLJ8UZ4jfHlr2nTvG2hqgSKdRgmIOqySoakynaPah8_GZUyjYH1rXVv_Q_znswrvEJUulb2Y22JPY9tC1URg" />
+            </div>
+        </div>
+    </header>
+    <main class="w-full pt-16 bg-surface-container-lowest min-h-screen">
+        <div
+            class="flex flex-col w-full relative min-h-[calc(100vh-64px)] overflow-hidden items-center justify-center py-16">
+            <div
+                class="relative w-full max-w-2xl mx-auto z-10 perspective-[1000px] flex items-center justify-center min-h-[640px] pl-24">
+                <!-- Stack Container -->
+                <div class="relative w-full max-w-[340px] h-[580px] transition-transform duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] group hover:-translate-y-4"
+                    id="card-stack">
+                    <!-- Card 5 (Bottom - Green) -->
+                    <div aria-hidden="true"
+                        class="absolute w-full h-full rounded-[40px] bg-[#99f7ac] shadow-2xl p-8 flex flex-col justify-between transition-all duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] delay-[60ms] transform -rotate-[8deg] -translate-x-32 group-hover:-rotate-[13deg] group-hover:-translate-x-44 group-hover:scale-[0.98] will-change-transform z-0 cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-12 h-12 bg-on-secondary-container/10 rounded-xl flex items-center justify-center text-on-secondary-container">
+                                <span class="material-symbols-outlined text-3xl">data_object</span>
+                            </div>
+                            <div class="bg-surface-container-lowest text-on-surface px-3 py-1 rounded-full shadow-sm">
+                                <span class="font-label-md">75% Match</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-on-secondary-container mb-2 leading-tight">Data Scientist
+                            </h3>
+                            <p class="font-body-md text-on-secondary-container/80 line-clamp-3">Join our analytics team
+                                to uncover insights from massive datasets. Requires strong Python and SQL skills.</p>
+                        </div>
+                        <div class="mt-4">
+                            <button
+                                class="w-full bg-on-secondary-container text-on-secondary font-label-md py-4 rounded-xl shadow-lg transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] active:scale-95"
+                                tabindex="-1">Click to Apply</button>
+                        </div>
+                    </div>
+                    <!-- Card 4 (Blue) -->
+                    <div aria-hidden="true"
+                        class="absolute w-full h-full rounded-[40px] bg-[#00E5FF] shadow-2xl p-8 flex flex-col justify-between transition-all duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] delay-[45ms] transform -rotate-[6deg] -translate-x-24 group-hover:-rotate-[9deg] group-hover:-translate-x-36 group-hover:scale-[0.985] will-change-transform z-10 cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-12 h-12 bg-on-primary-container/10 rounded-xl flex items-center justify-center text-on-primary-container">
+                                <span class="material-symbols-outlined text-3xl">architecture</span>
+                            </div>
+                            <div class="bg-surface-container-lowest text-on-surface px-3 py-1 rounded-full shadow-sm">
+                                <span class="font-label-md">82% Match</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-on-primary-container mb-2 leading-tight">Frontend Architect
+                            </h3>
+                            <p class="font-body-md text-on-primary-container/80 line-clamp-3">Lead the transition to a
+                                modern micro-frontend architecture. React and Webpack expertise essential.</p>
+                        </div>
+                        <div class="mt-4">
+                            <button
+                                class="w-full bg-on-primary-container text-on-primary font-label-md py-4 rounded-xl shadow-lg transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] active:scale-95"
+                                tabindex="-1">Click to Apply</button>
+                        </div>
+                    </div>
+                    <!-- Card 3 (Orange) -->
+                    <div aria-hidden="true"
+                        class="absolute w-full h-full rounded-[40px] bg-[#FF9500] shadow-2xl p-8 flex flex-col justify-between transition-all duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] delay-[30ms] transform -rotate-[4deg] -translate-x-16 group-hover:-rotate-[6deg] group-hover:-translate-x-28 group-hover:scale-[0.99] will-change-transform z-20 cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-12 h-12 bg-ink-black/10 rounded-xl flex items-center justify-center text-ink-black">
+                                <span class="material-symbols-outlined text-3xl">design_services</span>
+                            </div>
+                            <div class="bg-surface-container-lowest text-on-surface px-3 py-1 rounded-full shadow-sm">
+                                <span class="font-label-md">88% Match</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-ink-black mb-2 leading-tight">UX Researcher</h3>
+                            <p class="font-body-md text-ink-black/80 line-clamp-3">Conduct user interviews and usability
+                                testing to inform our product design decisions.</p>
+                        </div>
+                        <div class="mt-4">
+                            <button
+                                class="w-full bg-ink-black text-surface-container-lowest font-label-md py-4 rounded-xl shadow-lg transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] active:scale-95"
+                                tabindex="-1">Click to Apply</button>
+                        </div>
+                    </div>
+                    <!-- Card 2 (Yellow) -->
+                    <div aria-hidden="true"
+                        class="absolute w-full h-full rounded-[40px] bg-[#FFE200] shadow-2xl p-8 flex flex-col justify-between transition-all duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] delay-[15ms] transform -rotate-[2deg] -translate-x-8 group-hover:-rotate-[3deg] group-hover:-translate-x-14 group-hover:scale-[0.995] will-change-transform z-30 cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-12 h-12 bg-ink-black/10 rounded-xl flex items-center justify-center text-ink-black">
+                                <span class="material-symbols-outlined text-3xl">code_blocks</span>
+                            </div>
+                            <div class="bg-surface-container-lowest text-on-surface px-3 py-1 rounded-full shadow-sm">
+                                <span class="font-label-md">94% Match</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-ink-black mb-2 leading-tight">Full Stack Developer</h3>
+                            <p class="font-body-md text-ink-black/80 line-clamp-3">Build scalable web applications from
+                                scratch. Node.js on the backend, Vue on the frontend.</p>
+                        </div>
+                        <div class="mt-4">
+                            <button
+                                class="w-full bg-ink-black text-surface-container-lowest font-label-md py-4 rounded-xl shadow-lg transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] active:scale-95"
+                                tabindex="-1">Click to Apply</button>
+                        </div>
+                    </div>
+                    <!-- Card 1 (Top Active - Surface Lowest for stark contrast against the colored stack) -->
+                    <div
+                        class="absolute w-full h-full rounded-[40px] bg-surface-container-lowest border border-outline-variant/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-8 flex flex-col justify-between transition-all duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] transform z-40 group-hover:translate-x-5 group-hover:-translate-y-5 group-hover:rotate-[1.5deg] group-hover:shadow-[0_30px_70px_rgba(0,0,0,0.16)] will-change-transform cursor-grab active:cursor-grabbing active:scale-[0.97] active:duration-150">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-16 h-16 rounded-2xl overflow-hidden shadow-sm bg-surface-container-low flex-shrink-0 border border-outline-variant/10">
+                                    <img class="w-full h-full object-cover mix-blend-multiply"
+                                        data-alt="A clean, minimalist tech company logo featuring abstract geometric shapes in bold cyan and deep forest green colors against a pure white background. High resolution, modern app icon style."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2pfYl24Ot4lQ_3epE987duui_H_HWZohZxg1LmFYkWKvy7tPXPDeTxC7fAldupGPRXrvsDPMpzWH3fTDDx3NSZY6mVQdpJyAOicUZNlor1QizRMJBvgcp8C2Oxoc7LuqTF7bbKRqC3tvYSPCdgPOPJoET8wnSb5B7CE0ufhouj8Gp0XtPLNVpvObuIRqqeFMQM5iAR4iQAvR8hypSFncb58mXr_-i3YByv-SKLpGoRVTTQWh2Gd7OIw" />
+                                </div>
+                                <div>
+                                    <p class="font-label-sm text-outline tracking-widest uppercase mb-1">Nexus Tech</p>
+                                    <div
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-horizon-green/20 text-on-secondary-container">
+                                        <span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+                                        <span class="font-label-sm font-bold">98% Match</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <h2
+                                class="font-display-lg-mobile md:font-display-lg text-on-surface mb-4 leading-[1.1] tracking-tight">
+                                Senior Product<br />Designer</h2>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span
+                                    class="px-3 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-md text-sm border border-outline-variant/20">Remote</span>
+                                <span
+                                    class="px-3 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-md text-sm border border-outline-variant/20">$140k
+                                    - $180k</span>
+                                <span
+                                    class="px-3 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-md text-sm border border-outline-variant/20">Figma</span>
+                            </div>
+                            <p class="font-body-lg text-on-surface-variant leading-relaxed">
+                                Lead end-to-end product design for our flagship enterprise analytics platform. We are
+                                looking for a visionary who excels at turning complex data into intuitive, highly
+                                polished user interfaces.
+                            </p>
+                        </div>
+                        <div
+                            class="mt-8 pt-6 relative before:absolute before:top-0 before:left-0 before:w-full before:h-px before:bg-gradient-to-r before:from-transparent before:via-outline-variant/30 before:to-transparent">
+                            <button
+                                class="w-full relative group overflow-hidden bg-ink-black text-surface-container-lowest font-label-md py-4 rounded-xl shadow-lg transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] active:scale-95 flex items-center justify-center gap-2">
+                                <span class="relative z-10">Click to Apply</span>
+                                <span
+                                    class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-kinetic-cyan to-horizon-green opacity-0 group-hover:opacity-20 transition-opacity">
+                                </div>
+                            </button>
+                            <p
+                                class="text-center mt-3 font-label-sm text-outline flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">swipe</span> Swipe to dismiss
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Keyboard Hint -->
+            <div
+                class="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-0 pointer-events-none opacity-50">
+                <div class="flex items-center gap-2">
+                    <kbd
+                        class="px-2 py-1 bg-surface-container rounded-md font-label-sm text-on-surface-variant border-b-2 border-outline-variant shadow-sm">←</kbd>
+                    <span class="font-label-sm text-on-surface-variant">Pass</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-label-sm text-on-surface-variant">Apply</span>
+                    <kbd
+                        class="px-2 py-1 bg-surface-container rounded-md font-label-sm text-on-surface-variant border-b-2 border-outline-variant shadow-sm">→</kbd>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="w-full bg-surface-container-lowest py-margin-desktop border-t border-surface-variant">
+        <div
+            class="max-w-container-max-width mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter">
+            <div class="flex items-center gap-2"><img alt="Mew Logo"
+                    class="h-6 w-auto opacity-50 grayscale brightness-0"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lY6S7Y9HVG8JsmUlr_g0Ba4MyFUja5ttCtDfCdTXZonDaxJTt4DyuFy2-0sSnK-oInhJ-4C-9bbLuHrTAsoa225ABaix7flyiEFflUm9ZnNXli5OJp8kU1PAZYTVXGmHlW-l-ng7f5SDz71cg-b4a_8aM7pwIgIdsTGAVMmFSNH__lBljE7uIft8n4SoUJDfzfREQrA8wP4GIGiaDHC1ftocy2_dIZ2a3ice1lqrEu9gXNTI0cC0NA" /><span
+                    class="font-label-sm text-on-surface-variant uppercase tracking-widest">Powered by Mew AI</span>
+            </div>
+            <div class="flex gap-gutter"><a class="font-label-sm text-on-surface-variant hover:text-primary uppercase"
+                    href="#">Terms</a><a class="font-label-sm text-on-surface-variant hover:text-primary uppercase"
+                    href="#">Privacy</a><a class="font-label-sm text-on-surface-variant hover:text-primary uppercase"
+                    href="#">Support</a></div>
+            <div class="text-on-surface-variant font-label-sm">© 2024 MEW AI CORP.</div>
+        </div>
+    </footer>
+</body>
+
+</html>
