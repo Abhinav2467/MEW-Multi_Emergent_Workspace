@@ -193,17 +193,7 @@ async def public_rescan_resume():
     return {"status": "success", "data": profile_data}
 
 
-@router.get("/api/v1/profile")
-async def public_get_profile():
-    from backend.storage.profile_sync import PROFILE_JSON_PATH
-    if PROFILE_JSON_PATH.exists():
-        try:
-            with open(PROFILE_JSON_PATH, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return {"status": "success", "data": data}
-        except Exception:
-            pass
-    return {"status": "success", "data": {}}
+
 
 
 @router.put("/api/v1/profile")
