@@ -2104,55 +2104,65 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             const queue = document.getElementById('parsing-queue');
             if (!queue) return;
 
+            let history = [];
+            try {
+                const stored = localStorage.getItem('mew_resume_history');
+                if (stored) history = JSON.parse(stored);
+            } catch (e) {}
+
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
+                    const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
                     const res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/history`, {
-                        headers: window.MewApiClient.getHeaders()
+                        headers: {
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        }
                     });
                     if (res.ok) {
                         const json = await res.json();
-                        const history = json.data || [];
-
-                        if (history.length === 0) {
-                            queue.innerHTML = `
-                                <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
-                                    <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
-                                    <p class="font-bold text-xs text-on-surface">No Past Resumes Uploaded</p>
-                                    <p class="text-[11px] text-on-surface-variant">Resumes you parse will be tracked here for your account.</p>
-                                </div>`;
-                            return;
+                        const remote = json.data || [];
+                        if (remote && remote.length > 0) {
+                            const idMap = new Map();
+                            [...remote, ...history].forEach(item => {
+                                const key = item.id || item.filename;
+                                if (!idMap.has(key)) idMap.set(key, item);
+                            });
+                            history = Array.from(idMap.values());
+                            localStorage.setItem('mew_resume_history', JSON.stringify(history));
                         }
-
-                        queue.innerHTML = history.map((item) => {
-                            const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024 * 1024)).toFixed(1) + ' MB' : '1.4 MB';
-                            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
-
-                            return `
-                                <div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <span class="material-symbols-outlined text-[#137a46] filled">check_circle</span>
-                                            <div>
-                                                <p class="font-label-md text-xs font-semibold text-on-surface truncate max-w-[130px]">${item.filename}</p>
-                                                <p class="font-label-sm text-[10px] text-on-surface-variant">${sizeMb} • ${dateStr}</p>
-                                            </div>
-                                        </div>
-                                        <span class="font-mono text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#137a46] px-3 py-1 rounded-full shadow-sm">Completed</span>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                        return;
                     }
                 } catch (e) { console.warn('Error fetching resume history:', e); }
             }
 
-            queue.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
-                    <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
-                    <p class="font-bold text-xs text-on-surface">No Resumes Uploaded Yet</p>
-                    <p class="text-[11px] text-on-surface-variant">Upload a PDF/DOCX resume above to parse.</p>
-                </div>`;
+            if (!history || history.length === 0) {
+                queue.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
+                        <p class="font-bold text-xs text-on-surface">No Past Resumes Uploaded</p>
+                        <p class="text-[11px] text-on-surface-variant">Resumes you parse will be tracked here for your account.</p>
+                    </div>`;
+                return;
+            }
+
+            queue.innerHTML = history.map((item) => {
+                const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024 * 1024)).toFixed(1) + ' MB' : '1.4 MB';
+                const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
+
+                return `
+                    <div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-[#137a46] filled">check_circle</span>
+                                <div>
+                                    <p class="font-label-md text-xs font-semibold text-on-surface truncate max-w-[130px]">${item.filename || 'Resume.pdf'}</p>
+                                    <p class="font-label-sm text-[10px] text-on-surface-variant">${sizeMb} • ${dateStr}</p>
+                                </div>
+                            </div>
+                            <span class="font-mono text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#137a46] px-3 py-1 rounded-full shadow-sm">Completed</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Drop Zone & Preview Animated Loading Helpers
@@ -2393,6 +2403,19 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     alert(`[Error] Resume parsing failed!\n\nBackend could not parse the resume. Please check if the backend server is running and the Gemini API key is configured.\n\nDetails: ${e.message || e}`);
                 }
             }
+
+            try {
+                let currentHistory = [];
+                try { currentHistory = JSON.parse(localStorage.getItem('mew_resume_history') || '[]'); } catch(e){}
+                currentHistory.unshift({
+                    id: Date.now(),
+                    filename: filename,
+                    file_size_bytes: fileObj ? fileObj.size : 103317,
+                    status: 'Completed',
+                    created_at: new Date().toISOString()
+                });
+                localStorage.setItem('mew_resume_history', JSON.stringify(currentHistory));
+            } catch (e) {}
 
             updateDropZoneStep(100, '✓ Complete!');
             setDropZoneSuccessState(filename);
@@ -3478,32 +3501,43 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         async function recordAppliedJob(job) {
             if (!job || !job.company_name) return;
+            const appItem = {
+                id: Date.now(),
+                company_name: job.company_name,
+                position: job.position,
+                apply_link: job.apply_link || '#',
+                location: job.location || 'Remote',
+                matching_percentage: job.matching_percentage || 90,
+                relevant_skills: Array.isArray(job.relevant_skills) ? job.relevant_skills.join(', ') : (job.relevant_skills || ''),
+                hr_recruiter_name: job.hr_recruiter_name || 'Recruiter Lead',
+                hr_recruiter_email: job.hr_recruiter_email || `careers@${(job.company_name || 'tech').toLowerCase().replace(/\s+/g, '')}.com`,
+                cold_email_sent: !!job.cold_email_sent,
+                applied_at: new Date().toISOString()
+            };
+
+            try {
+                let storedApps = [];
+                try { storedApps = JSON.parse(localStorage.getItem('mew_applied_jobs') || '[]'); } catch(e){}
+                const key = (appItem.company_name + '-' + appItem.position).toLowerCase();
+                if (!storedApps.some(a => (a.company_name + '-' + a.position).toLowerCase() === key)) {
+                    storedApps.unshift(appItem);
+                    localStorage.setItem('mew_applied_jobs', JSON.stringify(storedApps));
+                }
+            } catch(e){}
+
             try {
                 const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
-                const payload = {
-                    company_name: job.company_name,
-                    position: job.position,
-                    apply_link: job.apply_link || '#',
-                    location: job.location || 'Remote',
-                    matching_percentage: job.matching_percentage || 90,
-                    relevant_skills: Array.isArray(job.relevant_skills) ? job.relevant_skills.join(', ') : (job.relevant_skills || ''),
-                    hr_recruiter_name: job.hr_recruiter_name || 'Recruiter Lead',
-                    hr_recruiter_email: job.hr_recruiter_email || `careers@${(job.company_name || 'tech').toLowerCase().replace(/\s+/g, '')}.com`,
-                    cold_email_sent: !!job.cold_email_sent
-                };
-                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app'}/api/v1/jobs/apply`, {
+                const baseUrl = window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app';
+                await fetch(`${baseUrl}/api/v1/jobs/apply`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(appItem)
                 });
-                if (res.ok) {
-                    console.log('✅ Intentional application recorded in DB for current user:', job.company_name, job.position);
-                    fetchAppliedJobs();
-                }
             } catch (e) { console.warn('Error recording job application:', e); }
+            fetchAppliedJobs();
         }
 
         async function fetchAppliedJobs() {
@@ -3514,16 +3548,36 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             if (candName && window.MewAppState) candName.textContent = window.MewAppState.user.name;
 
             if (!tableBody) return;
+
+            let apps = [];
+            try {
+                const stored = localStorage.getItem('mew_applied_jobs');
+                if (stored) apps = JSON.parse(stored);
+            } catch(e){}
+
             try {
                 const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
-                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app'}/api/v1/jobs/applications`, {
-                    headers: {
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    }
+                const baseUrl = window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app';
+                let res = await fetch(`${baseUrl}/api/v1/jobs/applications`, {
+                    headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
                 });
-                if (!res.ok) throw new Error('Failed to load application history');
-                const json = await res.json();
-                const apps = json.data || [];
+                if (!res.ok) {
+                    res = await fetch(`${baseUrl}/api/v1/applications`);
+                }
+                if (res.ok) {
+                    const json = await res.json();
+                    const remoteApps = json.data || json.applications || [];
+                    if (remoteApps && remoteApps.length > 0) {
+                        const appMap = new Map();
+                        [...remoteApps, ...apps].forEach(a => {
+                            const key = ((a.company_name || a.company || '') + '-' + (a.position || a.title || '')).toLowerCase();
+                            if (!appMap.has(key)) appMap.set(key, a);
+                        });
+                        apps = Array.from(appMap.values());
+                        localStorage.setItem('mew_applied_jobs', JSON.stringify(apps));
+                    }
+                }
+            } catch(e) { console.warn('Error fetching applied jobs:', e); }
 
                 if (totalStat) totalStat.textContent = apps.length;
                 if (emailedStat) emailedStat.textContent = apps.filter(a => a.cold_email_sent).length;
