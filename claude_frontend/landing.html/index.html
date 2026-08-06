@@ -1689,7 +1689,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             getHeaders(contentType = 'application/json') {
                 const headers = {};
                 if (contentType) headers['Content-Type'] = contentType;
-                if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+                const token = this.token || localStorage.getItem('mew_jwt_token');
+                if (token) headers['Authorization'] = `Bearer ${token}`;
                 return headers;
             },
 
@@ -1704,7 +1705,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 const formData = new FormData();
                 formData.append('file', file);
                 const headers = {};
-                if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+                const token = this.token || localStorage.getItem('mew_jwt_token');
+                if (token) headers['Authorization'] = `Bearer ${token}`;
 
                 const res = await fetch(`${this.baseUrl}/upload-resume`, {
                     method: 'POST',
@@ -1888,12 +1890,19 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             },
             syncUI() {
                 const isAuth = window.MewAppState.user && window.MewAppState.user.isAuthenticated;
+                const userName = isAuth ? (window.MewAppState.user.name || 'User') : 'Guest Candidate';
+                const userEmail = isAuth ? (window.MewAppState.user.email || '') : 'Unauthenticated';
 
-                // Header profile badge
+                // Header profile badge & dropdown
                 const emailElem = document.getElementById('user-display-email');
                 const nameElem = document.getElementById('user-display-name');
-                if (emailElem) emailElem.textContent = window.MewAppState.user.email;
-                if (nameElem) nameElem.textContent = window.MewAppState.user.name;
+                const dropNameElem = document.getElementById('dropdown-user-name');
+                const dropEmailElem = document.getElementById('dropdown-user-email');
+
+                if (emailElem) emailElem.textContent = userEmail;
+                if (nameElem) nameElem.textContent = userName;
+                if (dropNameElem) dropNameElem.textContent = userName;
+                if (dropEmailElem) dropEmailElem.textContent = userEmail;
 
                 // Sync Landing view authentication cards
                 const authForm = document.getElementById('auth-form');
@@ -1907,8 +1916,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         authSuccessCard.classList.remove('hidden');
                         authSuccessCard.classList.add('flex');
                     }
-                    if (authCardName) authCardName.textContent = `Welcome Back, ${window.MewAppState.user.name || 'User'}`;
-                    if (authCardEmail) authCardEmail.textContent = window.MewAppState.user.email || '';
+                    if (authCardName) authCardName.textContent = `Welcome Back, ${userName}`;
+                    if (authCardEmail) authCardEmail.textContent = userEmail;
                 } else {
                     if (authForm) authForm.classList.remove('hidden');
                     if (authSuccessCard) {
@@ -1920,16 +1929,16 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 // Resume Parser preview elements
                 const previewName = document.getElementById('preview-name');
                 const parsedEmail = document.getElementById('parsed-email');
-                if (previewName) previewName.textContent = window.MewAppState.user.name;
-                if (parsedEmail && !parsedEmail.value) parsedEmail.value = window.MewAppState.user.email;
+                if (previewName) previewName.textContent = isAuth ? userName : '';
+                if (parsedEmail && !parsedEmail.value) parsedEmail.value = isAuth ? userEmail : '';
 
                 // Job Matcher heading
                 const matchesCandidate = document.getElementById('job-matches-candidate-name');
-                if (matchesCandidate) matchesCandidate.textContent = window.MewAppState.user.name;
+                if (matchesCandidate) matchesCandidate.textContent = userName;
 
                 // Application Tracker heading
                 const trackerCandidate = document.getElementById('tracker-candidate-name');
-                if (trackerCandidate) trackerCandidate.textContent = window.MewAppState.user.name;
+                if (trackerCandidate) trackerCandidate.textContent = userName;
             }
         };
 
@@ -2326,8 +2335,10 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
                     updateDropZoneStep(80, '✨ 3/3 Gemini AI Structuring Telemetry...');
 
+                    const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
                     let res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/upload`, {
                         method: 'POST',
+                        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
                         body: formData
                     });
 
@@ -3458,6 +3469,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         async function recordAppliedJob(job) {
             if (!job || !job.company_name) return;
             try {
+                const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
                 const payload = {
                     company_name: job.company_name,
                     position: job.position,
@@ -3469,16 +3481,17 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     hr_recruiter_email: job.hr_recruiter_email || `careers@${(job.company_name || 'tech').toLowerCase().replace(/\s+/g, '')}.com`,
                     cold_email_sent: !!job.cold_email_sent
                 };
-                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'http://localhost:8000'}/api/v1/jobs/apply`, {
+                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app'}/api/v1/jobs/apply`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        ...(window.MewApiClient && window.MewApiClient.token ? { 'Authorization': `Bearer ${window.MewApiClient.token}` } : {})
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                     },
                     body: JSON.stringify(payload)
                 });
                 if (res.ok) {
                     console.log('✅ Intentional application recorded in DB for current user:', job.company_name, job.position);
+                    fetchAppliedJobs();
                 }
             } catch (e) { console.warn('Error recording job application:', e); }
         }
@@ -3492,9 +3505,10 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             if (!tableBody) return;
             try {
-                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'http://localhost:8000'}/api/v1/jobs/applications`, {
+                const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
+                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app'}/api/v1/jobs/applications`, {
                     headers: {
-                        ...(window.MewApiClient && window.MewApiClient.token ? { 'Authorization': `Bearer ${window.MewApiClient.token}` } : {})
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                     }
                 });
                 if (!res.ok) throw new Error('Failed to load application history');
@@ -3569,7 +3583,22 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         </tr>
                     `;
                 }).join('');
-            } catch (e) { console.warn('Error fetching user applications:', e); }
+            } catch (e) {
+                console.warn('Error fetching user applications:', e);
+                if (tableBody) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-4xl text-outline">inbox</span>
+                                    <p class="font-bold text-on-surface text-base">No Applications Tracked Yet</p>
+                                    <p class="text-xs text-on-surface-variant max-w-md">Go to <strong>AI Job Matches</strong> and click the green <strong>Apply (→)</strong> button to submit and track your job applications!</p>
+                                    <button onclick="MewRouter.navigateTo('matches')" class="mt-2 px-4 py-2 bg-kinetic-cyan text-on-primary font-bold text-xs rounded-xl shadow-md">Browse Job Matches ➔</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                }
+            }
         }
 
         let trackerModalJob = { role: '', company: '', hrEmail: '', hrName: '' };
