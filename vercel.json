@@ -1,5 +1,4 @@
 {
-  "buildCommand": "cd frontend && npm install --include=dev --legacy-peer-deps && npm run build",
-  "outputDirectory": "frontend/.next",
-  "framework": "nextjs"
+  "outputDirectory": "claude_frontend/landing.html",
+  "cleanUrls": true
 }

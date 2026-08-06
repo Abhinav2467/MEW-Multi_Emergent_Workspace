@@ -1629,9 +1629,9 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
     <!-- Application Controller Script -->
     <script>
-        // API Service Layer for FastAPI Backend (http://localhost:8000)
+        // API Service Layer for FastAPI Backend
         window.MewApiClient = {
-            baseUrl: 'http://localhost:8000',
+            baseUrl: window.MEW_API_URL || 'https://mew-multiemergentworkspace-production.up.railway.app',
             token: localStorage.getItem('mew_jwt_token') || '',
             isOnline: false,
 
@@ -2252,7 +2252,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         function downloadExtensionPackage(event) {
             if (event) event.stopPropagation();
-            window.open('http://localhost:8000/api/v1/extension/download', '_blank');
+            window.open(`${window.MewApiClient.baseUrl}/api/v1/extension/download`, '_blank');
         }
 
         function showPreviewSkeletonLoading(filename) {
@@ -2729,7 +2729,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 window.open(`${window.MewApiClient.baseUrl}/api/v1/jobs/report-view`, '_blank');
             } else {
-                window.open(`http://localhost:8000/api/v1/jobs/report-view`, '_blank');
+                window.open(`${window.MewApiClient.baseUrl}/api/v1/jobs/report-view`, '_blank');
             }
         }
 
