@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     gemini_parser_key: str = ""  # Dedicated key for MEW_RESUME_PARSER
     gemini_email_key: str = ""   # Dedicated key for MEW_COLD_EMAIL_STUDIO
     gemini_backup_key: str = ""  # Emergency backup key MEW_LLM_FAILOVER
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-2.0-flash"
     groq_api_key: str = ""
     tavily_api_key: str = ""
     hunter_api_key: str = ""
