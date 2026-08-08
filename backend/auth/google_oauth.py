@@ -44,7 +44,14 @@ async def exchange_code_for_tokens(code: str) -> dict[str, Any]:
     """Exchange authorization code for tokens and user info."""
     oauth = resolve_google_oauth_client()
 
-    redirect_uris_to_try = [oauth.redirect_uri, "urn:ietf:wg:oauth:2.0:oob", "http://localhost:3000/auth/callback"]
+    redirect_uris_to_try = [
+        oauth.redirect_uri,
+        "http://localhost",
+        "http://localhost:8000/auth/callback",
+        "https://developers.google.com/oauthplayground",
+        "urn:ietf:wg:oauth:2.0:oob",
+        "http://localhost:3000/auth/callback"
+    ]
     token_resp = None
     last_exc = None
 
