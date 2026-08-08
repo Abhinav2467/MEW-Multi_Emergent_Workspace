@@ -2384,7 +2384,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
                     let res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/upload`, {
                         method: 'POST',
-                        headers: window.MewApiClient ? window.MewApiClient.getHeaders() : {},
+                        headers: window.MewApiClient ? window.MewApiClient.getHeaders(null) : {},
                         body: formData
                     });
 
