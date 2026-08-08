@@ -12,7 +12,7 @@ export default function Navbar({ user, onGoogleLogin, onLogout, isExtensionConne
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tighter uppercase gradient-title">
-              MEW_SYSTEMS
+              MEW-Multi Emergent Workspace
             </h1>
             <p className="text-[10px] font-mono text-lime-400 tracking-wider">
               [SYS_AGENTIC_AUTOFILL_v2.0]

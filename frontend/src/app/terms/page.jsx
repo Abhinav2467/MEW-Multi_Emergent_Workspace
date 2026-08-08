@@ -20,7 +20,7 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">1. Acceptance of Terms</h2>
           <p className="text-slate-300 leading-relaxed">
-            By accessing or using <strong>MEW-Multi Emergent Workspace</strong> ("Service"), you agree to be bound by these Terms of Service. If you do not agree, do not access or use the Service.
+            By accessing or using <strong>MEW-Multi Emergent Workspace</strong> ("Service", "Application", "we", "us"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to all of these Terms, you may not access or use the Service.
           </p>
         </section>
 
@@ -28,7 +28,7 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">2. Description of Service</h2>
           <p className="text-slate-300 leading-relaxed">
-            MEW-Multi Emergent Workspace provides autonomous job matching, candidate profile management, and recruiter outreach drafting tools.
+            MEW-Multi Emergent Workspace provides autonomous job matching, candidate profile management, and recruiter outreach drafting tools to streamline career outreach workflows.
           </p>
         </section>
 
@@ -37,8 +37,8 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-slate-200">3. User Responsibilities</h2>
           <ul className="list-disc list-inside space-y-2 text-slate-300 pl-2">
             <li>Provide accurate resume and career information.</li>
-            <li>Review and authorize outgoing recruiter communications.</li>
-            <li>Maintain security over connected accounts.</li>
+            <li>Users are responsible for reviewing generated outreach before sending.</li>
+            <li>Maintain security over connected accounts and credentials.</li>
           </ul>
         </section>
 
@@ -46,12 +46,12 @@ export default function TermsOfService() {
         <section className="space-y-3 p-6 bg-slate-950/70 rounded-xl border border-sky-500/30">
           <h2 className="text-xl font-bold text-sky-400">4. Google OAuth and Gmail Usage</h2>
           <p className="text-slate-300 leading-relaxed">
-            MEW-Multi Emergent Workspace uses Gmail scopes (<code className="font-mono text-xs text-sky-300">gmail.compose</code> and <code className="font-mono text-xs text-sky-300">gmail.send</code>) only to create recruiter outreach email drafts in your Gmail account and to send recruiter outreach emails when explicitly initiated by you.
+            Google OAuth/Gmail permissions (<code className="font-mono text-xs text-sky-300">gmail.compose</code> and <code className="font-mono text-xs text-sky-300">gmail.send</code>) are used only for draft creation and user-approved sending of recruiter outreach emails.
           </p>
           <ul className="list-disc list-inside space-y-1 text-slate-300 pt-2">
-            <li>We do not read your inbox unless a future explicitly listed feature requires it.</li>
-            <li>We do not sell user data and we do not use Gmail data for advertising.</li>
-            <li>Revoke permissions at any time via <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" className="text-sky-400 underline">https://myaccount.google.com/permissions</a>.</li>
+            <li>We do not read your inbox for unrelated purposes.</li>
+            <li>We do not sell user data and we do not use Google user data for advertising.</li>
+            <li>Users can revoke access at any time via <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" className="text-sky-400 underline">https://myaccount.google.com/permissions</a>.</li>
           </ul>
         </section>
 
@@ -59,7 +59,7 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">5. Prohibited Use</h2>
           <p className="text-slate-300 leading-relaxed">
-            Users may not send spam, harvest unauthorized data, impersonate others, or violate telecommunication laws using the Service.
+            Users must not use the app for spam, harassment, fraud, or unauthorized outreach to recruiters, employers, or third parties.
           </p>
         </section>
 
@@ -67,7 +67,7 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">6. No Guarantee of Job Outcomes</h2>
           <p className="text-slate-300 leading-relaxed">
-            MEW-Multi Emergent Workspace does not guarantee job interviews, offers, or employment placements.
+            The app does not guarantee jobs, interviews, offers, recruiter replies, or application outcomes. Employment decisions remain solely between candidates and employers.
           </p>
         </section>
 
@@ -75,15 +75,15 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">7. Account and Access</h2>
           <p className="text-slate-300 leading-relaxed">
-            We reserve the right to suspend accounts violating these terms.
+            We reserve the right to suspend or terminate accounts violating these terms.
           </p>
         </section>
 
         {/* 8. Termination */}
         <section className="space-y-3">
-          <h2 class="text-xl font-bold text-slate-200">8. Termination</h2>
+          <h2 className="text-xl font-bold text-slate-200">8. Termination</h2>
           <p className="text-slate-300 leading-relaxed">
-            You may stop using the Service at any time and request data deletion via <a href="mailto:akamutala9@gmail.com" className="text-sky-400 underline">akamutala9@gmail.com</a>.
+            You may stop using the Service at any time and request account and data deletion by emailing <a href="mailto:akamutala9@gmail.com" className="text-sky-400 underline">akamutala9@gmail.com</a>.
           </p>
         </section>
 
@@ -91,7 +91,7 @@ export default function TermsOfService() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-slate-200">9. Disclaimer</h2>
           <p className="text-slate-300 leading-relaxed">
-            THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND.
+            THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED.
           </p>
         </section>
 
@@ -99,7 +99,7 @@ export default function TermsOfService() {
         <section className="space-y-3 pt-4 border-t border-slate-800">
           <h2 className="text-xl font-bold text-slate-200">10. Contact Information</h2>
           <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-sm">
-            <p className="font-bold text-slate-100">MEW-Multi Emergent Workspace</p>
+            <p className="font-bold text-slate-100">MEW-Multi Emergent Workspace Support</p>
             <p className="text-slate-400">Email: <a href="mailto:akamutala9@gmail.com" className="text-sky-400 underline">akamutala9@gmail.com</a></p>
           </div>
         </section>

@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Project MEW — Next-Gen AI Job Application Command Center",
-  description: "AI-powered candidate profile hub, recency job matching engine, and browser extension autofill center.",
+  title: "MEW-Multi Emergent Workspace",
+  description: "MEW-Multi Emergent Workspace - Autonomous job search, candidate profile management, and recruiter outreach workspace.",
 };
 
 export default function RootLayout({ children }) {
