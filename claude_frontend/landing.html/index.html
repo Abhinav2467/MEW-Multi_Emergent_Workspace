@@ -1745,7 +1745,17 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         window.MewRouter = {
             currentView: 'landing',
             navigateTo(viewName) {
-
+                // Auth guard: redirect to landing if not authenticated and trying to access protected views
+                const protectedViews = ['parser', 'matches', 'tracker', 'dashboard'];
+                const isAuth = window.MewAppState && window.MewAppState.user && window.MewAppState.user.isAuthenticated;
+                if (protectedViews.includes(viewName) && !isAuth) {
+                    // Show warning on auth form
+                    const toast = document.getElementById('auth-warning-toast');
+                    const msg = document.getElementById('auth-warning-msg');
+                    if (toast) toast.classList.remove('hidden');
+                    if (msg) msg.textContent = 'Please complete Google Login first to access ' + viewName + '.';
+                    viewName = 'landing';
+                }
 
                 document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
                 const targetSec = document.getElementById('view-' + viewName);
@@ -1799,9 +1809,18 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     }
                 });
 
-                // Update Header Workflow Stepper
+                // Update Header Workflow Stepper - hide entirely on landing/auth view
+                const isAuthView = (activeView === 'landing');
                 document.querySelectorAll('.stepper-step').forEach(step => {
                     const stepName = step.getAttribute('data-step');
+                    // Hide non-landing steps when not authenticated
+                    if (!isAuth && stepName !== 'landing') {
+                        step.style.display = 'none';
+                        step.style.pointerEvents = 'none';
+                    } else {
+                        step.style.display = '';
+                        step.style.pointerEvents = isAuth || stepName === 'landing' ? '' : 'none';
+                    }
                     const icon = step.querySelector('.step-icon');
 
                     const isCompleted = window.MewAppState.completedSteps[stepName];
