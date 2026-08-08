@@ -125,7 +125,7 @@ class GeminiParseClient:
         self,
         *,
         api_key: str | None,
-        model: str = "gemini-2.0-flash",
+        model: str = "gemini-flash-latest",
         client: Any | None = None,
     ) -> None:
         if client is None and not api_key:
