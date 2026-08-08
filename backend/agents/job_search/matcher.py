@@ -192,7 +192,7 @@ def score_jobs(
         title_lower = title.lower()
         desc_lower = desc.lower()
 
-        if exp_low > 6 and job_type != "INTERNSHIP":
+        if (exp_low > 6 or any(k in title_lower for k in ["senior principal", "principal architect"])) and job_type != "INTERNSHIP":
             continue
 
         matched_skills: list[str] = []

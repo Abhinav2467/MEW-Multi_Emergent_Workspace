@@ -2384,6 +2384,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
                     let res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/upload`, {
                         method: 'POST',
+                        headers: window.MewApiClient ? window.MewApiClient.getHeaders() : {},
                         body: formData
                     });
 
@@ -3831,8 +3832,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">draft</span> Saving Draft...`;
             }
 
-            const subject = document.getElementById('email-subject')?.value || `Inquiry for ${activeJobTitle}`;
-            const body = document.getElementById('email-body')?.value || '';
+            const subject = document.getElementById('modal-studio-email-subject')?.value || document.getElementById('email-subject')?.value || `Inquiry for ${activeJobTitle}`;
+            const body = document.getElementById('modal-studio-email-body')?.value || document.getElementById('email-body')?.value || '';
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {

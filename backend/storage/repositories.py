@@ -493,8 +493,8 @@ class AppliedJobRepository:
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
         cursor = await self.conn.execute(
-            "SELECT * FROM applied_jobs WHERE user_id = ? OR ? = 1 ORDER BY id DESC",
-            (user_id, user_id),
+            "SELECT * FROM applied_jobs WHERE user_id = ? OR user_id = 1 ORDER BY id DESC",
+            (user_id,),
         )
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
@@ -557,8 +557,8 @@ class ResumeHistoryRepository:
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
         cursor = await self.conn.execute(
-            "SELECT * FROM resume_history WHERE user_id = ? OR ? = 1 ORDER BY id DESC",
-            (user_id, user_id),
+            "SELECT * FROM resume_history WHERE user_id = ? OR user_id = 1 ORDER BY id DESC",
+            (user_id,),
         )
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
