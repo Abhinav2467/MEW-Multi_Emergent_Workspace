@@ -1678,7 +1678,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             async createDrafts(jobMatchIds) {
                 if (!this.isOnline) return null;
-                const res = await fetch(`${this.baseUrl}/emails/drafts`, {
+                const res = await fetch(`${this.baseUrl}/api/v1/emails/save-draft`, {
                     method: 'POST',
                     headers: this.getHeaders(),
                     body: JSON.stringify({ job_match_ids: jobMatchIds })
@@ -1688,7 +1688,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             async sendEmails(draftIds) {
                 if (!this.isOnline) return null;
-                const res = await fetch(`${this.baseUrl}/emails/send`, {
+                const res = await fetch(`${this.baseUrl}/api/v1/emails/send`, {
                     method: 'POST',
                     headers: this.getHeaders(),
                     body: JSON.stringify({ draft_ids: draftIds })

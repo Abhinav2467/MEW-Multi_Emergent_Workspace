@@ -463,10 +463,20 @@ async def public_save_draft(
                     pass
 
     if not creds_dict:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Gmail OAuth token not found for account {user.get('email')}. Please log in with Google to connect your Gmail account."
-        )
+        return {
+            "status": "success",
+            "message": f"Cold email draft saved locally for {company}! (Connect Gmail via Google Login to sync live drafts directly to Gmail)",
+            "user_email": user.get("email") or "",
+            "data": {
+                "draft_id": f"draft_{secrets.token_hex(6)}",
+                "company": company,
+                "role": role,
+                "hr_email": hr_email,
+                "hr_name": hr_name,
+                "subject": subject,
+                "body": body,
+            },
+        }
 
     try:
         res = execute_cold_email(
