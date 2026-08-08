@@ -1694,21 +1694,21 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         window.MewAppState = {
             activeView: 'landing',
             user: {
-                email: 'candidate@mew.ai',
-                name: 'Guest Candidate',
+                email: '',
+                name: '',
                 role: 'Candidate',
-                isAuthenticated: true
+                isAuthenticated: false
             },
             resume: {
-                fileName: 'resume.pdf',
-                email: 'candidate@mew.ai',
+                fileName: '',
+                email: '',
                 phone: '',
                 location: '',
                 skills: [],
                 parsed: false
             },
             completedSteps: {
-                landing: true,
+                landing: false,
                 parser: false,
                 matches: false
             },
@@ -1860,22 +1860,18 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         // Auth Handlers
         function openGoogleAuthWindow() {
-            // Open window synchronously to bypass browser popup blockers
-            const authWin = window.open('about:blank', '_blank');
             const fallbackClientId = '687818556583-mrmcf9jupect5reccpfbsc3lettdr3rd.apps.googleusercontent.com';
             const fallbackScopes = 'openid email profile https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send';
-            let authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent`;
-
-            if (authWin) {
-                authWin.location.href = authUrl;
-            }
+            const fallbackUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent`;
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
+                // Fetch backend URL then open in same tab redirect trick
                 window.MewApiClient.getAuthUrl().then(data => {
-                    if (data && data.url && authWin) {
-                        authWin.location.href = data.url;
-                    }
-                }).catch(e => console.warn('Error fetching backend Google auth URL:', e));
+                    const url = (data && data.url) ? data.url : fallbackUrl;
+                    window.open(url, '_blank');
+                }).catch(() => window.open(fallbackUrl, '_blank'));
+            } else {
+                window.open(fallbackUrl, '_blank');
             }
         }
 
@@ -1941,6 +1937,21 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         }
 
         async function checkAutoLogin() {
+            // FIRST: Clear any stale guest/hardcoded localStorage state from old versions
+            try {
+                const saved = localStorage.getItem('mew_app_state');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // If state has no real email (was guest mode), wipe it
+                    const email = parsed?.user?.email || '';
+                    if (!email || email === 'candidate@mew.ai') {
+                        localStorage.removeItem('mew_app_state');
+                        localStorage.removeItem('mew_jwt_token');
+                        console.log('Cleared stale guest auth state from localStorage');
+                    }
+                }
+            } catch (e) { /* ignore */ }
+
             window.MewAppState.load();
             let autoAuth = false;
 
@@ -1960,6 +1971,9 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         window.MewAppState.completedSteps.landing = true;
                         window.MewAppState.save();
                         autoAuth = true;
+                    } else {
+                        // Token is invalid — clear it
+                        localStorage.removeItem('mew_jwt_token');
                     }
                 } catch (e) {
                     console.warn('Backend JWT validation error', e);
@@ -2006,6 +2020,12 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 MewRouter.navigateTo(target === 'landing' ? 'parser' : target);
                 return true;
             }
+
+            // Not authenticated — clear any stale state and show the auth form
+            window.MewAppState.user.isAuthenticated = false;
+            window.MewAppState.completedSteps.landing = false;
+            window.MewAppState.save();
+            MewRouter.syncUI();
             MewRouter.navigateTo('landing');
             return false;
         }
