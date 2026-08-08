@@ -193,7 +193,17 @@ async def public_rescan_resume():
     return {"status": "success", "data": profile_data}
 
 
-
+@router.get("/api/v1/profile")
+async def public_get_profile():
+    from backend.storage.profile_sync import PROFILE_JSON_PATH
+    if PROFILE_JSON_PATH.exists():
+        try:
+            with open(PROFILE_JSON_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return {"status": "success", "data": data}
+        except Exception:
+            pass
+    return {"status": "success", "data": {}}
 
 
 @router.put("/api/v1/profile")
@@ -324,23 +334,18 @@ async def public_upload_resume(
 
 @router.get("/api/v1/resume/history")
 async def get_resume_history(
-    user: Any = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
-    try:
-        user_id = user["id"] if isinstance(user, dict) and "id" in user else 1
-        repo = ResumeHistoryRepository(conn)
-        history = await repo.list_for_user(user_id)
-        return {
-            "status": "success",
-            "user_id": user_id,
-            "user_email": user.get("email") if isinstance(user, dict) else None,
-            "data": history,
-        }
-    except Exception as exc:
-        print(f"[Error] get_resume_history failed: {exc}")
-        return {"status": "success", "user_id": 1, "user_email": None, "data": []}
+    repo = ResumeHistoryRepository(conn)
+    history = await repo.list_for_user(user["id"])
+    return {
+        "status": "success",
+        "user_id": user["id"],
+        "user_email": user.get("email"),
+        "data": history,
+    }
 
 
 @router.get("/resume/{profile_id}", response_model=ProfileResponse)

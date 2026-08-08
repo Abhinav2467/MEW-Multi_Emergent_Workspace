@@ -586,79 +586,12 @@
                     </div>
                 </div>
 
-                <!-- User Profile Dropdown Wrapper -->
-                <div class="relative" id="profile-menu-wrapper">
-                    <button id="btn-profile-toggle" onclick="toggleProfileDropdown(event)"
-                        class="flex items-center gap-3 pl-4 border-l border-outline-variant/40 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
-                        title="User Profile Menu">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-label-md font-label-md text-on-surface font-semibold" id="user-display-name">
-                                Alex Rivera</p>
-                            <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-wider"
-                                id="user-display-email">alex@mewai.dev</p>
-                        </div>
-                        <img alt="Profile" id="user-display-avatar"
-                            class="w-9 h-9 rounded-full object-cover ring-2 ring-primary/30 shadow-sm"
-                            onerror="this.src='https://ui-avatars.com/api/?name='+encodeURIComponent(document.getElementById('user-display-name')?.textContent||'Abhinav+Kamutala')+'&background=006a6a&color=fff'"
-                            src="https://lh3.googleusercontent.com/aida/AP1WRLtNfxEoEYhBCEpbE1IMZsRgq1U6LuCYyzJZg_Znt0fJHDBYpN3mLcFUX6yAVPmQyxXcOwdMDffeYVaYJOtkLizjySaDHt_wlCVtB8NlBUpIf0mDjG7PJRFZcwSTVsMOpzc36oTHpFvhr3kCpWySzLQI3k5IA5_7z91cjwB0hroP_a6TdupWul5DcmMYzGQcZWEdIlIX_MYpMNU-0AEVk1uzpygdjnKl3oUNbtnQPA6N-dN07NNWJ-jofjfW" />
-                    </button>
-
-                    <!-- Profile Floating Dropdown Menu (YouTube Style) -->
-                    <div id="profile-dropdown"
-                        class="hidden absolute right-0 mt-3 w-72 bg-surface-container-lowest/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-outline-variant/30 z-50 overflow-hidden transition-all duration-200 opacity-0 transform scale-95 origin-top-right">
-                        <!-- User Identity Card Header -->
-                        <div
-                            class="p-4 bg-surface-container-low/60 border-b border-outline-variant/20 flex items-center gap-3">
-                            <img alt="Profile" id="dropdown-user-avatar"
-                                class="w-11 h-11 rounded-full object-cover ring-2 ring-primary/40 shadow-sm"
-                                onerror="this.src='https://ui-avatars.com/api/?name='+encodeURIComponent(document.getElementById('dropdown-user-name')?.textContent||'Abhinav+Kamutala')+'&background=006a6a&color=fff'"
-                                src="https://lh3.googleusercontent.com/aida/AP1WRLtNfxEoEYhBCEpbE1IMZsRgq1U6LuCYyzJZg_Znt0fJHDBYpN3mLcFUX6yAVPmQyxXcOwdMDffeYVaYJOtkLizjySaDHt_wlCVtB8NlBUpIf0mDjG7PJRFZcwSTVsMOpzc36oTHpFvhr3kCpWySzLQI3k5IA5_7z91cjwB0hroP_a6TdupWul5DcmMYzGQcZWEdIlIX_MYpMNU-0AEVk1uzpygdjnKl3oUNbtnQPA6N-dN07NNWJ-jofjfW" />
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-on-surface truncate" id="dropdown-user-name">Alex
-                                    Rivera</p>
-                                <p class="text-[11px] text-on-surface-variant truncate" id="dropdown-user-email">
-                                    alex@mewai.dev</p>
-                                <span
-                                    class="inline-flex items-center gap-1 text-[9px] text-[#137a46] font-mono font-bold bg-[#137a46]/10 px-2 py-0.5 rounded-full border border-[#137a46]/20 mt-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-[#137a46] animate-pulse"></span>
-                                    Session Active
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Menu Actions -->
-                        <div class="p-2 space-y-0.5">
-                            <button onclick="openProfileDetailsModal(); hideAllHeaderDropdowns();"
-                                class="w-full px-3 py-2.5 rounded-xl flex items-center gap-3 text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors group text-left">
-                                <span
-                                    class="material-symbols-outlined text-lg text-on-surface-variant group-hover:text-primary transition-colors">account_circle</span>
-                                <span>Profile & Candidate Info</span>
-                            </button>
-
-                            <button onclick="openAgentConfigModal(); hideAllHeaderDropdowns();"
-                                class="w-full px-3 py-2.5 rounded-xl flex items-center gap-3 text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors group text-left">
-                                <span
-                                    class="material-symbols-outlined text-lg text-on-surface-variant group-hover:text-primary transition-colors">tune</span>
-                                <span>Agent Configuration Studio</span>
-                            </button>
-
-                            <button onclick="openHistoryModal(); hideAllHeaderDropdowns();"
-                                class="w-full px-3 py-2.5 rounded-xl flex items-center gap-3 text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors group text-left">
-                                <span
-                                    class="material-symbols-outlined text-lg text-on-surface-variant group-hover:text-primary transition-colors">history</span>
-                                <span>Parse History Vault</span>
-                            </button>
-                        </div>
-
-                        <!-- Divider & Sign Out Button -->
-                        <div class="p-2 border-t border-outline-variant/20 bg-surface-container-low/30">
-                            <button onclick="logoutUser(); hideAllHeaderDropdowns();"
-                                class="w-full px-3 py-2.5 rounded-xl flex items-center gap-3 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left">
-                                <span class="material-symbols-outlined text-lg text-red-600">logout</span>
-                                <span>Sign Out</span>
-                            </button>
-                        </div>
-                    </div>
+                <!-- Clean Guest Mode Indicator -->
+                <div class="flex items-center gap-2 pl-3 border-l border-outline-variant/40" id="profile-menu-wrapper">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="user-display-name">Candidate Active</span>
+                    </span>
                 </div>
             </div>
         </header>
@@ -1067,9 +1000,9 @@
                                     </div>
                                     <div>
                                         <h2 class="font-headline-sm text-lg font-semibold text-on-surface"
-                                            id="preview-name">Alex Rivera</h2>
+                                            id="preview-name">Guest Candidate</h2>
                                         <p class="font-label-md text-xs text-on-surface-variant uppercase tracking-wider"
-                                            id="preview-filename">alex_rivera_cv.pdf</p>
+                                            id="preview-filename">resume.pdf</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -1205,7 +1138,7 @@
                             <span
                                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-horizon-green/20 text-on-secondary-container font-label-md text-xs font-semibold">
                                 <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
-                                <span>AI Matches for <span id="job-matches-candidate-name">Alex Rivera</span></span>
+                                <span>AI Matches for <span id="job-matches-candidate-name">Guest Candidate</span></span>
                             </span>
                             <button onclick="downloadExcelReport()"
                                 class="px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-xs border border-outline-variant/30 flex items-center gap-1.5 transition-colors shadow-sm"
@@ -1689,8 +1622,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             getHeaders(contentType = 'application/json') {
                 const headers = {};
                 if (contentType) headers['Content-Type'] = contentType;
-                const token = this.token || localStorage.getItem('mew_jwt_token');
-                if (token) headers['Authorization'] = `Bearer ${token}`;
+                if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
                 return headers;
             },
 
@@ -1705,8 +1637,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 const formData = new FormData();
                 formData.append('file', file);
                 const headers = {};
-                const token = this.token || localStorage.getItem('mew_jwt_token');
-                if (token) headers['Authorization'] = `Bearer ${token}`;
+                if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
 
                 const res = await fetch(`${this.baseUrl}/upload-resume`, {
                     method: 'POST',
@@ -1763,21 +1694,21 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         window.MewAppState = {
             activeView: 'landing',
             user: {
-                email: '',
-                name: '',
+                email: 'candidate@mew.ai',
+                name: 'Guest Candidate',
                 role: 'Candidate',
-                isAuthenticated: false
+                isAuthenticated: true
             },
             resume: {
-                fileName: 'alex_rivera_cv.pdf',
-                email: 'alex@mewai.dev',
-                phone: '+1 (555) 019-2834',
-                location: 'San Francisco, CA',
-                skills: ['Product Design', 'Figma & UI Architecture', 'React & Design Systems', 'TypeScript', 'User Research'],
+                fileName: 'resume.pdf',
+                email: 'candidate@mew.ai',
+                phone: '',
+                location: '',
+                skills: [],
                 parsed: false
             },
             completedSteps: {
-                landing: false,
+                landing: true,
                 parser: false,
                 matches: false
             },
@@ -1803,15 +1734,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         window.MewRouter = {
             currentView: 'landing',
             navigateTo(viewName) {
-                // Strict Auth Guard: Block navigation to non-landing views if not authenticated
-                if (viewName !== 'landing' && (!window.MewAppState.user || !window.MewAppState.user.isAuthenticated)) {
-                    const toast = document.getElementById('auth-warning-toast');
-                    if (toast) {
-                        toast.classList.remove('hidden');
-                        setTimeout(() => toast.classList.add('hidden'), 4000);
-                    }
-                    viewName = 'landing';
-                }
+
 
                 document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
                 const targetSec = document.getElementById('view-' + viewName);
@@ -1890,19 +1813,12 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             },
             syncUI() {
                 const isAuth = window.MewAppState.user && window.MewAppState.user.isAuthenticated;
-                const userName = isAuth ? (window.MewAppState.user.name || 'User') : 'Guest Candidate';
-                const userEmail = isAuth ? (window.MewAppState.user.email || '') : 'Unauthenticated';
 
-                // Header profile badge & dropdown
+                // Header profile badge
                 const emailElem = document.getElementById('user-display-email');
                 const nameElem = document.getElementById('user-display-name');
-                const dropNameElem = document.getElementById('dropdown-user-name');
-                const dropEmailElem = document.getElementById('dropdown-user-email');
-
-                if (emailElem) emailElem.textContent = userEmail;
-                if (nameElem) nameElem.textContent = userName;
-                if (dropNameElem) dropNameElem.textContent = userName;
-                if (dropEmailElem) dropEmailElem.textContent = userEmail;
+                if (emailElem) emailElem.textContent = window.MewAppState.user.email;
+                if (nameElem) nameElem.textContent = window.MewAppState.user.name;
 
                 // Sync Landing view authentication cards
                 const authForm = document.getElementById('auth-form');
@@ -1916,8 +1832,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         authSuccessCard.classList.remove('hidden');
                         authSuccessCard.classList.add('flex');
                     }
-                    if (authCardName) authCardName.textContent = `Welcome Back, ${userName}`;
-                    if (authCardEmail) authCardEmail.textContent = userEmail;
+                    if (authCardName) authCardName.textContent = `Welcome Back, ${window.MewAppState.user.name || 'User'}`;
+                    if (authCardEmail) authCardEmail.textContent = window.MewAppState.user.email || '';
                 } else {
                     if (authForm) authForm.classList.remove('hidden');
                     if (authSuccessCard) {
@@ -1929,16 +1845,16 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 // Resume Parser preview elements
                 const previewName = document.getElementById('preview-name');
                 const parsedEmail = document.getElementById('parsed-email');
-                if (previewName) previewName.textContent = isAuth ? userName : '';
-                if (parsedEmail && !parsedEmail.value) parsedEmail.value = isAuth ? userEmail : '';
+                if (previewName) previewName.textContent = window.MewAppState.user.name;
+                if (parsedEmail && !parsedEmail.value) parsedEmail.value = window.MewAppState.user.email;
 
                 // Job Matcher heading
                 const matchesCandidate = document.getElementById('job-matches-candidate-name');
-                if (matchesCandidate) matchesCandidate.textContent = userName;
+                if (matchesCandidate) matchesCandidate.textContent = window.MewAppState.user.name;
 
                 // Application Tracker heading
                 const trackerCandidate = document.getElementById('tracker-candidate-name');
-                if (trackerCandidate) trackerCandidate.textContent = userName;
+                if (trackerCandidate) trackerCandidate.textContent = window.MewAppState.user.name;
             }
         };
 
@@ -2104,65 +2020,55 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             const queue = document.getElementById('parsing-queue');
             if (!queue) return;
 
-            let history = [];
-            try {
-                const stored = localStorage.getItem('mew_resume_history');
-                if (stored) history = JSON.parse(stored);
-            } catch (e) {}
-
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
-                    const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
                     const res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/history`, {
-                        headers: {
-                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                        }
+                        headers: window.MewApiClient.getHeaders()
                     });
                     if (res.ok) {
                         const json = await res.json();
-                        const remote = json.data || [];
-                        if (remote && remote.length > 0) {
-                            const idMap = new Map();
-                            [...remote, ...history].forEach(item => {
-                                const key = item.id || item.filename;
-                                if (!idMap.has(key)) idMap.set(key, item);
-                            });
-                            history = Array.from(idMap.values());
-                            localStorage.setItem('mew_resume_history', JSON.stringify(history));
+                        const history = json.data || [];
+
+                        if (history.length === 0) {
+                            queue.innerHTML = `
+                                <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
+                                    <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
+                                    <p class="font-bold text-xs text-on-surface">No Past Resumes Uploaded</p>
+                                    <p class="text-[11px] text-on-surface-variant">Resumes you parse will be tracked here for your account.</p>
+                                </div>`;
+                            return;
                         }
+
+                        queue.innerHTML = history.map((item) => {
+                            const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024 * 1024)).toFixed(1) + ' MB' : '1.4 MB';
+                            const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
+
+                            return `
+                                <div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-[#137a46] filled">check_circle</span>
+                                            <div>
+                                                <p class="font-label-md text-xs font-semibold text-on-surface truncate max-w-[130px]">${item.filename}</p>
+                                                <p class="font-label-sm text-[10px] text-on-surface-variant">${sizeMb} • ${dateStr}</p>
+                                            </div>
+                                        </div>
+                                        <span class="font-mono text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#137a46] px-3 py-1 rounded-full shadow-sm">Completed</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                        return;
                     }
                 } catch (e) { console.warn('Error fetching resume history:', e); }
             }
 
-            if (!history || history.length === 0) {
-                queue.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
-                        <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
-                        <p class="font-bold text-xs text-on-surface">No Past Resumes Uploaded</p>
-                        <p class="text-[11px] text-on-surface-variant">Resumes you parse will be tracked here for your account.</p>
-                    </div>`;
-                return;
-            }
-
-            queue.innerHTML = history.map((item) => {
-                const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024 * 1024)).toFixed(1) + ' MB' : '1.4 MB';
-                const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
-
-                return `
-                    <div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
-                        <div class="flex items-start justify-between">
-                            <div class="flex items-center gap-3">
-                                <span class="material-symbols-outlined text-[#137a46] filled">check_circle</span>
-                                <div>
-                                    <p class="font-label-md text-xs font-semibold text-on-surface truncate max-w-[130px]">${item.filename || 'Resume.pdf'}</p>
-                                    <p class="font-label-sm text-[10px] text-on-surface-variant">${sizeMb} • ${dateStr}</p>
-                                </div>
-                            </div>
-                            <span class="font-mono text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#137a46] px-3 py-1 rounded-full shadow-sm">Completed</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            queue.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-2xl text-outline">upload_file</span>
+                    <p class="font-bold text-xs text-on-surface">No Resumes Uploaded Yet</p>
+                    <p class="text-[11px] text-on-surface-variant">Upload a PDF/DOCX resume above to parse.</p>
+                </div>`;
         }
 
         // Drop Zone & Preview Animated Loading Helpers
@@ -2355,10 +2261,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
                     updateDropZoneStep(80, '✨ 3/3 Gemini AI Structuring Telemetry...');
 
-                    const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
                     let res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/resume/upload`, {
                         method: 'POST',
-                        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
                         body: formData
                     });
 
@@ -2403,19 +2307,6 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     alert(`[Error] Resume parsing failed!\n\nBackend could not parse the resume. Please check if the backend server is running and the Gemini API key is configured.\n\nDetails: ${e.message || e}`);
                 }
             }
-
-            try {
-                let currentHistory = [];
-                try { currentHistory = JSON.parse(localStorage.getItem('mew_resume_history') || '[]'); } catch(e){}
-                currentHistory.unshift({
-                    id: Date.now(),
-                    filename: filename,
-                    file_size_bytes: fileObj ? fileObj.size : 103317,
-                    status: 'Completed',
-                    created_at: new Date().toISOString()
-                });
-                localStorage.setItem('mew_resume_history', JSON.stringify(currentHistory));
-            } catch (e) {}
 
             updateDropZoneStep(100, '✓ Complete!');
             setDropZoneSuccessState(filename);
@@ -3501,8 +3392,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         async function recordAppliedJob(job) {
             if (!job || !job.company_name) return;
-            const appItem = {
-                id: Date.now(),
+            const payload = {
                 company_name: job.company_name,
                 position: job.position,
                 apply_link: job.apply_link || '#',
@@ -3515,29 +3405,31 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 applied_at: new Date().toISOString()
             };
 
+            // Local cache fallback
             try {
-                let storedApps = [];
-                try { storedApps = JSON.parse(localStorage.getItem('mew_applied_jobs') || '[]'); } catch(e){}
-                const key = (appItem.company_name + '-' + appItem.position).toLowerCase();
-                if (!storedApps.some(a => (a.company_name + '-' + a.position).toLowerCase() === key)) {
-                    storedApps.unshift(appItem);
-                    localStorage.setItem('mew_applied_jobs', JSON.stringify(storedApps));
+                let cached = JSON.parse(localStorage.getItem('mew_applied_jobs') || '[]');
+                const existsIdx = cached.findIndex(c => c.company_name === payload.company_name && c.position === payload.position);
+                if (existsIdx >= 0) {
+                    cached[existsIdx] = { ...cached[existsIdx], ...payload };
+                } else {
+                    cached.unshift(payload);
                 }
-            } catch(e){}
+                localStorage.setItem('mew_applied_jobs', JSON.stringify(cached));
+            } catch (e) { console.warn('LocalStorage save error:', e); }
 
             try {
-                const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
-                const baseUrl = window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app';
-                await fetch(`${baseUrl}/api/v1/jobs/apply`, {
+                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'http://localhost:8000'}/api/v1/jobs/apply`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        ...(window.MewApiClient && window.MewApiClient.token ? { 'Authorization': `Bearer ${window.MewApiClient.token}` } : {})
                     },
-                    body: JSON.stringify(appItem)
+                    body: JSON.stringify(payload)
                 });
+                if (res.ok) {
+                    console.log('✅ Intentional application recorded in DB for current user:', job.company_name, job.position);
+                }
             } catch (e) { console.warn('Error recording job application:', e); }
-            fetchAppliedJobs();
         }
 
         async function fetchAppliedJobs() {
@@ -3545,57 +3437,47 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             const totalStat = document.getElementById('tracker-stat-total');
             const emailedStat = document.getElementById('tracker-stat-emailed');
             const candName = document.getElementById('tracker-candidate-name');
-            if (candName && window.MewAppState) candName.textContent = window.MewAppState.user.name;
+            if (candName && window.MewAppState) candName.textContent = window.MewAppState.user.name || 'Candidate';
 
             if (!tableBody) return;
-
             let apps = [];
-            try {
-                const stored = localStorage.getItem('mew_applied_jobs');
-                if (stored) apps = JSON.parse(stored);
-            } catch(e){}
 
             try {
-                const token = (window.MewApiClient && window.MewApiClient.token) || localStorage.getItem('mew_jwt_token');
-                const baseUrl = window.MewApiClient ? window.MewApiClient.baseUrl : 'https://mew-multiemergentworkspace-production.up.railway.app';
-                let res = await fetch(`${baseUrl}/api/v1/jobs/applications`, {
-                    headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+                const res = await fetch(`${window.MewApiClient ? window.MewApiClient.baseUrl : 'http://localhost:8000'}/api/v1/jobs/applications`, {
+                    headers: {
+                        ...(window.MewApiClient && window.MewApiClient.token ? { 'Authorization': `Bearer ${window.MewApiClient.token}` } : {})
+                    }
                 });
-                if (!res.ok) {
-                    res = await fetch(`${baseUrl}/api/v1/applications`);
-                }
                 if (res.ok) {
                     const json = await res.json();
-                    const remoteApps = json.data || json.applications || [];
-                    if (remoteApps && remoteApps.length > 0) {
-                        const appMap = new Map();
-                        [...remoteApps, ...apps].forEach(a => {
-                            const key = ((a.company_name || a.company || '') + '-' + (a.position || a.title || '')).toLowerCase();
-                            if (!appMap.has(key)) appMap.set(key, a);
-                        });
-                        apps = Array.from(appMap.values());
-                        localStorage.setItem('mew_applied_jobs', JSON.stringify(apps));
-                    }
+                    apps = json.data || [];
                 }
-            } catch(e) { console.warn('Error fetching applied jobs:', e); }
+            } catch (e) { console.warn('Error fetching backend user applications:', e); }
 
-                if (totalStat) totalStat.textContent = apps.length;
-                if (emailedStat) emailedStat.textContent = apps.filter(a => a.cold_email_sent).length;
+            // Fallback to local cache if backend returned zero or offline
+            if (!apps || apps.length === 0) {
+                try {
+                    apps = JSON.parse(localStorage.getItem('mew_applied_jobs') || '[]');
+                } catch (e) {}
+            }
 
-                if (apps.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined text-4xl text-outline">inbox</span>
-                                    <p class="font-bold text-on-surface text-base">No Applications Tracked Yet</p>
-                                    <p class="text-xs text-on-surface-variant max-w-md">Go to <strong>AI Job Matches</strong> and click the green <strong>Apply (→)</strong> button to submit and track your job applications!</p>
-                                    <button onclick="MewRouter.navigateTo('matches')" class="mt-2 px-4 py-2 bg-kinetic-cyan text-on-primary font-bold text-xs rounded-xl shadow-md">Browse Job Matches ➔</button>
-                                </div>
-                            </td>
-                        </tr>`;
-                    return;
-                }
+            if (totalStat) totalStat.textContent = apps.length;
+            if (emailedStat) emailedStat.textContent = apps.filter(a => a.cold_email_sent).length;
+
+            if (apps.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-4xl text-outline">inbox</span>
+                                <p class="font-bold text-on-surface text-base">No Applications Tracked Yet</p>
+                                <p class="text-xs text-on-surface-variant max-w-md">Go to <strong>AI Job Matches</strong> and click the green <strong>Apply (→)</strong> button to submit and track your job applications!</p>
+                                <button onclick="MewRouter.navigateTo('matches')" class="mt-2 px-4 py-2 bg-kinetic-cyan text-on-primary font-bold text-xs rounded-xl shadow-md">Browse Job Matches ➔</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
 
                 tableBody.innerHTML = apps.map((app, idx) => {
                     const comp = app.company_name || 'Company';
@@ -3647,22 +3529,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         </tr>
                     `;
                 }).join('');
-            } catch (e) {
-                console.warn('Error fetching user applications:', e);
-                if (tableBody) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined text-4xl text-outline">inbox</span>
-                                    <p class="font-bold text-on-surface text-base">No Applications Tracked Yet</p>
-                                    <p class="text-xs text-on-surface-variant max-w-md">Go to <strong>AI Job Matches</strong> and click the green <strong>Apply (→)</strong> button to submit and track your job applications!</p>
-                                    <button onclick="MewRouter.navigateTo('matches')" class="mt-2 px-4 py-2 bg-kinetic-cyan text-on-primary font-bold text-xs rounded-xl shadow-md">Browse Job Matches ➔</button>
-                                </div>
-                            </td>
-                        </tr>`;
-                }
-            }
+            } catch (e) { console.warn('Error fetching user applications:', e); }
         }
 
         let trackerModalJob = { role: '', company: '', hrEmail: '', hrName: '' };

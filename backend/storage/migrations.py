@@ -113,13 +113,17 @@ async def run_migrations(conn: aiosqlite.Connection) -> None:
         await conn.execute("ALTER TABLE users ADD COLUMN google_refresh_token TEXT")
     except Exception:
         pass
-
-    cursor = await conn.execute("SELECT COUNT(*) FROM users")
-    count = (await cursor.fetchone())[0]
-    if count == 0:
+    # Ensure default guest user (id=1) exists so foreign keys never fail for unauthenticated API requests
+    try:
         await conn.execute(
-            "INSERT INTO users (id, google_id, email, name) VALUES (1, 'default_candidate_001', 'candidate@mew.ai', 'Candidate User')"
+            """
+            INSERT INTO users (id, google_id, email, name)
+            VALUES (1, 'guest_user_1', 'candidate@mew.ai', 'Guest Candidate')
+            ON CONFLICT(id) DO NOTHING
+            """
         )
+    except Exception as exc:
+        print(f"[Warning] Seed guest user migration notice: {exc}")
     await conn.commit()
 
 

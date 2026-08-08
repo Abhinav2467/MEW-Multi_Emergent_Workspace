@@ -410,17 +410,6 @@ class DraftRepository:
         await self.conn.commit()
 
 
-def _row_to_dict(row: Any) -> dict[str, Any]:
-    if not row:
-        return {}
-    try:
-        if hasattr(row, "keys"):
-            return {str(k): row[k] for k in row.keys()}
-        return dict(row)
-    except Exception:
-        return {}
-
-
 class AppliedJobRepository:
     def __init__(self, conn: aiosqlite.Connection) -> None:
         self.conn = conn
@@ -431,11 +420,12 @@ class AppliedJobRepository:
         user_id: int,
         company_name: str,
         position: str,
-        apply_link: str = "#",
+        apply_link: str,
         location: str | None = None,
         matching_percentage: int = 0,
         relevant_skills: str | None = None,
         hr_recruiter_name: str | None = None,
+        hr_recruiter_email: str | None = None,
         cold_email_sent: bool = False,
     ) -> dict[str, Any]:
         cursor = await self.conn.execute(
@@ -499,19 +489,15 @@ class AppliedJobRepository:
             "SELECT * FROM applied_jobs WHERE id = ?", (app_id,)
         )
         row = await cursor.fetchone()
-        return _row_to_dict(row) if row else None
+        return dict(row) if row else None
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
-        try:
-            cursor = await self.conn.execute(
-                "SELECT * FROM applied_jobs WHERE user_id = ? ORDER BY id DESC",
-                (user_id,),
-            )
-            rows = await cursor.fetchall()
-            return [_row_to_dict(r) for r in rows if r]
-        except Exception as exc:
-            print(f"[Warning] list_for_user applied_jobs exception: {exc}")
-            return []
+        cursor = await self.conn.execute(
+            "SELECT * FROM applied_jobs WHERE user_id = ? OR ? = 1 ORDER BY id DESC",
+            (user_id, user_id),
+        )
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
 
     async def update_cold_email_status(
         self,
@@ -521,28 +507,25 @@ class AppliedJobRepository:
         position: str | None = None,
         cold_email_sent: bool = True,
     ) -> None:
-        try:
-            if position:
-                await self.conn.execute(
-                    """
-                    UPDATE applied_jobs
-                    SET cold_email_sent = ?
-                    WHERE user_id = ? AND LOWER(company_name) = LOWER(?) AND LOWER(position) = LOWER(?)
-                    """,
-                    (1 if cold_email_sent else 0, user_id, company_name, position),
-                )
-            else:
-                await self.conn.execute(
-                    """
-                    UPDATE applied_jobs
-                    SET cold_email_sent = ?
-                    WHERE user_id = ? AND LOWER(company_name) = LOWER(?)
-                    """,
-                    (1 if cold_email_sent else 0, user_id, company_name),
-                )
-            await self.conn.commit()
-        except Exception:
-            pass
+        if position:
+            await self.conn.execute(
+                """
+                UPDATE applied_jobs
+                SET cold_email_sent = ?
+                WHERE (user_id = ? OR ? = 1) AND LOWER(company_name) = LOWER(?) AND LOWER(position) = LOWER(?)
+                """,
+                (1 if cold_email_sent else 0, user_id, user_id, company_name, position),
+            )
+        else:
+            await self.conn.execute(
+                """
+                UPDATE applied_jobs
+                SET cold_email_sent = ?
+                WHERE (user_id = ? OR ? = 1) AND LOWER(company_name) = LOWER(?)
+                """,
+                (1 if cold_email_sent else 0, user_id, user_id, company_name),
+            )
+        await self.conn.commit()
 
 
 class ResumeHistoryRepository:
@@ -557,52 +540,27 @@ class ResumeHistoryRepository:
         file_size_bytes: int = 0,
         status: str = "Completed",
     ) -> dict[str, Any]:
-        try:
-            cursor = await self.conn.execute(
-                """
-                INSERT INTO resume_history (user_id, filename, file_size_bytes, status)
-                VALUES (?, ?, ?, ?)
-                """,
-                (user_id, filename, file_size_bytes, status),
-            )
-            await self.conn.commit()
-            row_id = cursor.lastrowid
-            cursor_res = await self.conn.execute(
-                "SELECT * FROM resume_history WHERE id = ?", (row_id,)
-            )
-            row = await cursor_res.fetchone()
-            return dict(row) if row else {}
-        except Exception:
-            try:
-                from backend.storage.migrations import run_migrations
-                await run_migrations(self.conn)
-                cursor = await self.conn.execute(
-                    """
-                    INSERT INTO resume_history (user_id, filename, file_size_bytes, status)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (user_id, filename, file_size_bytes, status),
-                )
-                await self.conn.commit()
-                row_id = cursor.lastrowid
-                cursor_res = await self.conn.execute(
-                    "SELECT * FROM resume_history WHERE id = ?", (row_id,)
-                )
-                row = await cursor_res.fetchone()
-                return dict(row) if row else {}
-            except Exception:
-                return {}
+        cursor = await self.conn.execute(
+            """
+            INSERT INTO resume_history (user_id, filename, file_size_bytes, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            (user_id, filename, file_size_bytes, status),
+        )
+        await self.conn.commit()
+        row_id = cursor.lastrowid
+        cursor_res = await self.conn.execute(
+            "SELECT * FROM resume_history WHERE id = ?", (row_id,)
+        )
+        row = await cursor_res.fetchone()
+        return dict(row) if row else {}
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
-        try:
-            cursor = await self.conn.execute(
-                "SELECT * FROM resume_history WHERE user_id = ? ORDER BY id DESC",
-                (user_id,),
-            )
-            rows = await cursor.fetchall()
-            return [_row_to_dict(r) for r in rows if r]
-        except Exception as exc:
-            print(f"[Warning] list_for_user resume_history exception: {exc}")
-            return []
+        cursor = await self.conn.execute(
+            "SELECT * FROM resume_history WHERE user_id = ? OR ? = 1 ORDER BY id DESC",
+            (user_id, user_id),
+        )
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
 
 

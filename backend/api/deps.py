@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 import aiosqlite
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from backend.auth.jwt import decode_access_token
@@ -43,28 +43,21 @@ async def get_current_user(
 
 
 async def get_current_user_optional(
-    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
     conn: aiosqlite.Connection = Depends(get_db),
 ) -> dict[str, Any]:
-    auth_header = request.headers.get("Authorization") or request.headers.get("authorization")
-    if auth_header and auth_header.lower().startswith("bearer "):
-        token = auth_header[7:].strip()
-        if token and token not in ("null", "undefined", "none", ""):
-            try:
-                payload = decode_access_token(token)
-                user_id = int(payload["sub"])
-                user = await UserRepository(conn).get_by_id(user_id)
-                if user:
-                    return user
-            except Exception:
-                pass
+    if credentials is not None and credentials.scheme.lower() == "bearer":
+        try:
+            payload = decode_access_token(credentials.credentials)
+            user_id = int(payload["sub"])
+            user = await UserRepository(conn).get_by_id(user_id)
+            if user:
+                return user
+        except Exception:
+            pass
 
-    try:
-        user = await UserRepository(conn).get_active_or_first_user()
-        if user:
-            return user
-    except Exception:
-        pass
-
+    user = await UserRepository(conn).get_active_or_first_user()
+    if user:
+        return user
     return {"id": 1, "email": "candidate@mew.ai", "name": "Guest Candidate"}
 

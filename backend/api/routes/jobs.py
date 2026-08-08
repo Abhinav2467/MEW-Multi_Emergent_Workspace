@@ -440,10 +440,9 @@ async def record_job_application(
         hr_name = hr_name if (hr_name and "Recruiter Lead" not in hr_name) else disc_name
         hr_email = hr_email if (hr_email and "careers@" not in hr_email) else disc_email
 
-    user_id = user["id"] if user else 1
     repo = AppliedJobRepository(conn)
     app_record = await repo.record_application(
-        user_id=user_id,
+        user_id=user["id"],
         company_name=company,
         position=position,
         apply_link=link,
@@ -459,24 +458,19 @@ async def record_job_application(
 
 @router.get("/api/v1/jobs/applications")
 async def list_user_applications(
-    user: Any = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """List applications strictly isolated for the currently logged in user."""
-    try:
-        user_id = user["id"] if isinstance(user, dict) and "id" in user else 1
-        repo = AppliedJobRepository(conn)
-        apps = await repo.list_for_user(user_id)
-        return {"status": "success", "user_id": user_id, "user_email": user.get("email") if isinstance(user, dict) else None, "data": apps}
-    except Exception as exc:
-        print(f"[Error] list_user_applications failed: {exc}")
-        return {"status": "success", "user_id": 1, "user_email": None, "data": []}
+    repo = AppliedJobRepository(conn)
+    apps = await repo.list_for_user(user["id"])
+    return {"status": "success", "user_id": user["id"], "user_email": user.get("email"), "data": apps}
 
 
 @router.post("/api/v1/jobs/mark-cold-email-sent")
 async def mark_cold_email_sent(
     payload: dict[str, Any],
-    user: Any = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Mark cold email as sent for a job position for the currently logged in user."""
@@ -485,10 +479,9 @@ async def mark_cold_email_sent(
     if not company:
         raise HTTPException(status_code=400, detail="company_name is required")
 
-    user_id = user["id"] if user else 1
     repo = AppliedJobRepository(conn)
     await repo.update_cold_email_status(
-        user_id=user_id,
+        user_id=user["id"],
         company_name=company,
         position=position,
         cold_email_sent=True,
