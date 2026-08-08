@@ -485,6 +485,7 @@ async def public_save_draft(
         return {
             "status": "success",
             "message": f"Cold email draft saved directly in your real Gmail inbox! ({user.get('email')})",
+            "user_email": user.get("email") or "",
             "data": {
                 "draft_id": draft_id,
                 "company": company,

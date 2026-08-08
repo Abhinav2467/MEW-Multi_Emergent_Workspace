@@ -3851,7 +3851,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${window.MewAppState.user.email})`);
+                        const emailDisplay = json.user_email || window.MewAppState?.user?.email || 'your connected Gmail account';
+                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${emailDisplay})`);
                     } else {
                         alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
                     }
