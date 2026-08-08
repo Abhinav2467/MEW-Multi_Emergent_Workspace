@@ -586,12 +586,23 @@
                     </div>
                 </div>
 
-                <!-- Clean Guest Mode Indicator -->
-                <div class="flex items-center gap-2 pl-3 border-l border-outline-variant/40" id="profile-menu-wrapper">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                <!-- Profile Menu with Sign Out Dropdown -->
+                <div class="flex items-center gap-2 pl-3 border-l border-outline-variant/40 relative" id="profile-menu-wrapper">
+                    <button onclick="toggleProfileDropdown(event)" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container cursor-pointer transition-colors">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span id="user-display-name">Candidate Active</span>
-                    </span>
+                        <span class="material-symbols-outlined text-[13px] ml-0.5">expand_more</span>
+                    </button>
+                    <div id="profile-dropdown" class="hidden absolute right-0 top-full mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                        <div class="px-4 py-2.5 border-b border-slate-100">
+                            <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Signed in as</p>
+                            <p id="profile-dropdown-name" class="text-xs font-bold text-slate-800 truncate mt-0.5">Candidate</p>
+                        </div>
+                        <button onclick="logoutUser()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-mono font-bold text-red-600 hover:bg-red-50 transition-colors">
+                            <span class="material-symbols-outlined text-sm">logout</span>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -1912,6 +1923,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             window.MewAppState.user.isAuthenticated = true;
             window.MewAppState.user.privateKey = key;
             window.MewAppState.completedSteps.landing = true;
+            localStorage.setItem('mew_session_active', '1'); // persist across refresh
             window.MewAppState.save();
 
             // Sync UI header & unlock views
@@ -2014,6 +2026,19 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 }
             }
 
+            // 4. Restore session from localStorage session flag (survives refresh without JWT)
+            if (!autoAuth && localStorage.getItem('mew_session_active') === '1') {
+                const saved = (() => { try { return JSON.parse(localStorage.getItem('mew_app_state') || '{}'); } catch(e) { return {}; } })();
+                if (saved?.user?.isAuthenticated) {
+                    Object.assign(window.MewAppState.user, saved.user);
+                    Object.assign(window.MewAppState.resume, saved.resume || {});
+                    Object.assign(window.MewAppState.completedSteps, saved.completedSteps || {});
+                    window.MewAppState.user.isAuthenticated = true;
+                    window.MewAppState.completedSteps.landing = true;
+                    autoAuth = true;
+                }
+            }
+
             if (autoAuth) {
                 MewRouter.syncUI();
                 const target = window.MewAppState.activeView || 'parser';
@@ -2031,18 +2056,42 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         }
 
         function logoutUser() {
+            // Close dropdown first
+            const dd = document.getElementById('profile-dropdown');
+            if (dd) dd.classList.add('hidden');
+            // Clear all session keys
             localStorage.removeItem('mew_jwt_token');
             localStorage.removeItem('mew_app_state');
+            localStorage.removeItem('mew_session_active');
             if (window.MewApiClient) window.MewApiClient.token = '';
             window.MewAppState.user.isAuthenticated = false;
             window.MewAppState.user.name = '';
             window.MewAppState.user.email = '';
+            window.MewAppState.completedSteps.landing = false;
             window.MewAppState.activeView = 'landing';
             window.MewAppState.save();
             MewRouter.syncUI();
             MewRouter.navigateTo('landing');
-            alert('Logged out successfully.');
         }
+
+        function toggleProfileDropdown(e) {
+            e.stopPropagation();
+            const dd = document.getElementById('profile-dropdown');
+            if (!dd) return;
+            dd.classList.toggle('hidden');
+            // Update name in dropdown
+            const nameEl = document.getElementById('profile-dropdown-name');
+            if (nameEl) nameEl.textContent = window.MewAppState?.user?.name || 'Candidate';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('profile-menu-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const dd = document.getElementById('profile-dropdown');
+                if (dd) dd.classList.add('hidden');
+            }
+        });
 
         // Resume Parser Handlers
         async function fetchResumeHistory() {
@@ -2091,6 +2140,30 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     }
                 } catch (e) { console.warn('Error fetching resume history:', e); }
             }
+
+            // Fallback: read from localStorage resume history
+            try {
+                const localHist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
+                if (localHist.length > 0) {
+                    queue.innerHTML = localHist.map(item => {
+                        const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024*1024)).toFixed(1) + ' MB' : '—';
+                        const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
+                        return `<div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-[#137a46] filled">check_circle</span>
+                                    <div>
+                                        <p class="font-label-md text-xs font-semibold text-on-surface truncate max-w-[130px]">${item.filename}</p>
+                                        <p class="font-label-sm text-[10px] text-on-surface-variant">${sizeMb} • ${dateStr}</p>
+                                    </div>
+                                </div>
+                                <span class="font-mono text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#137a46] px-3 py-1 rounded-full shadow-sm">Cached</span>
+                            </div>
+                        </div>`;
+                    }).join('');
+                    return;
+                }
+            } catch(e) {}
 
             queue.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
@@ -2326,6 +2399,15 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         window.MewAppState.resume.phone = candPhone;
                         window.MewAppState.resume.location = candLoc;
                         window.MewAppState.resume.skills = candSkills;
+                        window.MewAppState.resume.parsed = true;
+                        window.MewAppState.save(); // persist name so it survives refresh
+
+                        // Save to local resume history for persistence across logins
+                        try {
+                            const hist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
+                            hist.unshift({ filename, file_size_bytes: fileObj?.size || 0, created_at: new Date().toISOString(), name: candName });
+                            localStorage.setItem('mew_resume_history', JSON.stringify(hist.slice(0, 20)));
+                        } catch(e) {}
 
                         updateSkillsUI(candSkills);
                         renderExperienceUI(candExp);
@@ -3487,7 +3569,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             if (!apps || apps.length === 0) {
                 try {
                     apps = JSON.parse(localStorage.getItem('mew_applied_jobs') || '[]');
-                } catch (e) {}
+                } catch (e) { }
             }
 
             if (totalStat) totalStat.textContent = apps.length;
