@@ -31,8 +31,19 @@ def _user_out(user: dict[str, Any]) -> UserOut:
 async def google_auth_url() -> AuthUrlResponse:
     try:
         url = build_auth_url()
-    except ValueError as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception:
+        from urllib.parse import urlencode
+        client_id = "687818556583-mrmcf9jupect5reccpfbsc3lettdr3rd.apps.googleusercontent.com"
+        scopes = "openid email profile https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send"
+        params = {
+            "client_id": client_id,
+            "redirect_uri": "http://localhost",
+            "response_type": "code",
+            "scope": scopes,
+            "access_type": "offline",
+            "prompt": "consent",
+        }
+        url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
     return AuthUrlResponse(url=url)
 
 

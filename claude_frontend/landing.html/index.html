@@ -1860,7 +1860,10 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         // Auth Handlers
         async function openGoogleAuthWindow() {
-            let authUrl = `${window.MewApiClient ? window.MewApiClient.baseUrl : 'http://localhost:8000'}/auth/google`;
+            const fallbackClientId = '687818556583-mrmcf9jupect5reccpfbsc3lettdr3rd.apps.googleusercontent.com';
+            const fallbackScopes = 'openid email profile https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send';
+            let authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent`;
+
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
                     const data = await window.MewApiClient.getAuthUrl();

@@ -125,7 +125,7 @@ def resolve_google_oauth_client() -> GoogleOAuthClient:
         return GoogleOAuthClient(
             client_id=client_id,
             client_secret=client_secret,
-            redirect_uri=OOB_REDIRECT_URI,
+            redirect_uri=settings.google_redirect_uri or "http://localhost",
             source=str(creds_path),
         )
 
