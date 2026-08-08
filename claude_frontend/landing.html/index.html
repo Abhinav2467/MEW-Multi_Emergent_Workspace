@@ -3508,6 +3508,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 return;
             }
 
+            try {
                 tableBody.innerHTML = apps.map((app, idx) => {
                     const comp = app.company_name || 'Company';
                     const pos = app.position || 'Position';
@@ -3558,7 +3559,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                         </tr>
                     `;
                 }).join('');
-            } catch (e) { console.warn('Error fetching user applications:', e); }
+            } catch (e) { console.warn('Error rendering applications table:', e); }
         }
 
         let trackerModalJob = { role: '', company: '', hrEmail: '', hrName: '' };
