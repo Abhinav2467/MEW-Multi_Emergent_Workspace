@@ -432,7 +432,7 @@ async def public_save_draft(
         except Exception:
             pass
 
-    # Load OAuth token credentials from SPECIFIC authenticated user!
+    # Load OAuth token credentials strictly from current authenticated user
     creds_dict = None
     if user.get("gmail_tokens_json"):
         t_data = user["gmail_tokens_json"]
@@ -446,21 +446,6 @@ async def public_save_draft(
         if row and row[0]:
             t_data = row[0]
             creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
-
-    if not creds_dict:
-        possible_token_paths = [
-            WORKSPACE_DIR / "cold_email_agent" / "token.json",
-            WORKSPACE_DIR / "token.json",
-        ]
-        for p in possible_token_paths:
-            if p.exists():
-                try:
-                    with open(p, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        creds_dict = json.loads(data) if isinstance(data, str) else data
-                        break
-                except Exception:
-                    pass
 
     if not creds_dict:
         return {
@@ -543,21 +528,6 @@ async def public_send_cold_email(
         if row and row[0]:
             t_data = row[0]
             creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
-
-    if not creds_dict:
-        possible_token_paths = [
-            WORKSPACE_DIR / "cold_email_agent" / "token.json",
-            WORKSPACE_DIR / "token.json",
-        ]
-        for p in possible_token_paths:
-            if p.exists():
-                try:
-                    with open(p, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        creds_dict = json.loads(data) if isinstance(data, str) else data
-                        break
-                except Exception:
-                    pass
 
     sender_name = user.get("name") or "Candidate"
     sent_result = None

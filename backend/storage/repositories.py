@@ -83,24 +83,6 @@ class UserRepository:
         await self.conn.commit()
 
     async def get_active_or_first_user(self) -> dict[str, Any] | None:
-        # 1. Check profile.json for email match first
-        try:
-            from backend.storage.profile_sync import PROFILE_JSON_PATH
-            if PROFILE_JSON_PATH.exists():
-                with open(PROFILE_JSON_PATH, "r", encoding="utf-8") as f:
-                    pdata = json.load(f)
-                    pemail = (pdata.get("personal") or {}).get("email")
-                    if pemail:
-                        cursor = await self.conn.execute(
-                            "SELECT * FROM users WHERE LOWER(email) = LOWER(?)", (pemail.strip(),)
-                        )
-                        row = await cursor.fetchone()
-                        if row:
-                            return dict(row)
-        except Exception:
-            pass
-
-        # 2. Fallback to active user with token or first user
         cursor = await self.conn.execute(
             "SELECT * FROM users WHERE gmail_tokens_json IS NOT NULL OR google_refresh_token IS NOT NULL ORDER BY id DESC LIMIT 1"
         )
@@ -493,7 +475,7 @@ class AppliedJobRepository:
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
         cursor = await self.conn.execute(
-            "SELECT * FROM applied_jobs WHERE user_id = ? OR user_id = 1 ORDER BY id DESC",
+            "SELECT * FROM applied_jobs WHERE user_id = ? ORDER BY id DESC",
             (user_id,),
         )
         rows = await cursor.fetchall()
@@ -512,18 +494,18 @@ class AppliedJobRepository:
                 """
                 UPDATE applied_jobs
                 SET cold_email_sent = ?
-                WHERE (user_id = ? OR ? = 1) AND LOWER(company_name) = LOWER(?) AND LOWER(position) = LOWER(?)
+                WHERE user_id = ? AND LOWER(company_name) = LOWER(?) AND LOWER(position) = LOWER(?)
                 """,
-                (1 if cold_email_sent else 0, user_id, user_id, company_name, position),
+                (1 if cold_email_sent else 0, user_id, company_name, position),
             )
         else:
             await self.conn.execute(
                 """
                 UPDATE applied_jobs
                 SET cold_email_sent = ?
-                WHERE (user_id = ? OR ? = 1) AND LOWER(company_name) = LOWER(?)
+                WHERE user_id = ? AND LOWER(company_name) = LOWER(?)
                 """,
-                (1 if cold_email_sent else 0, user_id, user_id, company_name),
+                (1 if cold_email_sent else 0, user_id, company_name),
             )
         await self.conn.commit()
 
@@ -557,7 +539,7 @@ class ResumeHistoryRepository:
 
     async def list_for_user(self, user_id: int) -> list[dict[str, Any]]:
         cursor = await self.conn.execute(
-            "SELECT * FROM resume_history WHERE user_id = ? OR user_id = 1 ORDER BY id DESC",
+            "SELECT * FROM resume_history WHERE user_id = ? ORDER BY id DESC",
             (user_id,),
         )
         rows = await cursor.fetchall()

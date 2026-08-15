@@ -2162,7 +2162,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             // Fallback: read from localStorage resume history
             try {
-                const localHist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
+                const userEmail = (window.MewAppState && window.MewAppState.user && window.MewAppState.user.email) ? window.MewAppState.user.email : 'guest';
+                const localHist = JSON.parse(localStorage.getItem('mew_resume_history_' + userEmail) || '[]');
                 if (localHist.length > 0) {
                     queue.innerHTML = localHist.map(item => {
                         const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024*1024)).toFixed(1) + ' MB' : '—';
@@ -2424,9 +2425,11 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
                         // Save to local resume history for persistence across logins
                         try {
-                            const hist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
+                            const userEmail = (window.MewAppState && window.MewAppState.user && window.MewAppState.user.email) ? window.MewAppState.user.email : 'guest';
+                            const histKey = 'mew_resume_history_' + userEmail;
+                            const hist = JSON.parse(localStorage.getItem(histKey) || '[]');
                             hist.unshift({ filename, file_size_bytes: fileObj?.size || 0, created_at: new Date().toISOString(), name: candName });
-                            localStorage.setItem('mew_resume_history', JSON.stringify(hist.slice(0, 20)));
+                            localStorage.setItem(histKey, JSON.stringify(hist.slice(0, 20)));
                         } catch(e) {}
 
                         updateSkillsUI(candSkills);

@@ -207,8 +207,30 @@ async def public_get_profile():
 
 
 @router.put("/api/v1/profile")
-async def public_update_profile(payload: dict[str, Any]):
+async def public_update_profile(
+    payload: dict[str, Any],
+    user: dict[str, Any] = Depends(get_current_user_optional),
+    conn: aiosqlite.Connection = Depends(get_db),
+):
     from backend.storage.profile_sync import PROFILE_JSON_PATH
+    from backend.storage.repositories import UserRepository
+
+    new_email = payload.get("email")
+    if new_email and isinstance(new_email, str) and new_email.strip():
+        clean_email = new_email.strip().lower()
+        current_user_id = user.get("id") if user else None
+
+        user_repo = UserRepository(conn)
+        existing_user = await user_repo.get_by_email(clean_email)
+
+        # Check if the email belongs to ANOTHER registered user in the database
+        if existing_user:
+            if not current_user_id or existing_user["id"] != current_user_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="You can't use this email. It's registered with another user, and you can't use it.",
+                )
+
     existing = {}
     if PROFILE_JSON_PATH.exists():
         try:
@@ -228,8 +250,12 @@ async def public_update_profile(payload: dict[str, Any]):
     personal["full_name"] = full_name
     personal["first_name"] = first_name
     personal["last_name"] = last_name
+    requires_reauth = False
     if "email" in payload:
-        personal["email"] = payload["email"]
+        edited_email = str(payload["email"]).strip()
+        personal["email"] = edited_email
+        if user and user.get("email") and edited_email.lower() != user["email"].strip().lower():
+            requires_reauth = True
     if "phone" in payload:
         personal["phone"] = payload["phone"]
     if "location" in payload:
@@ -248,7 +274,11 @@ async def public_update_profile(payload: dict[str, Any]):
     with open(PROFILE_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(existing, f, indent=2)
 
-    return {"status": "success", "data": existing}
+    response_data = {"status": "success", "data": existing}
+    if requires_reauth:
+        response_data["requires_google_reauth"] = True
+        response_data["message"] = "Email updated. Re-verification with Google Auth is required to send emails from this address."
+    return response_data
 
 
 @router.post("/api/v1/resume/upload")
@@ -338,6 +368,14 @@ async def get_resume_history(
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
+    if not user or not user.get("id") or (user.get("id") == 1 and user.get("email") == "candidate@mew.ai" and "Guest" in user.get("name", "")):
+        return {
+            "status": "success",
+            "user_id": None,
+            "user_email": None,
+            "data": [],
+        }
+
     repo = ResumeHistoryRepository(conn)
     history = await repo.list_for_user(user["id"])
     return {
@@ -374,6 +412,14 @@ async def update_resume(
 
     profile = repo.parse_profile(record)
     if body.contact is not None:
+        if body.contact.email and body.contact.email.strip():
+            clean_email = body.contact.email.strip().lower()
+            existing_user = await UserRepository(conn).get_by_email(clean_email)
+            if existing_user and existing_user["id"] != user["id"]:
+                raise HTTPException(
+                    status_code=400,
+                    detail="You can't use this email. It's registered with another user, and you can't use it.",
+                )
         profile.contact = body.contact
     if body.skills is not None:
         profile.skills = body.skills

@@ -129,18 +129,34 @@ export default function Home() {
   };
 
   const handleUpdateProfile = async (updatedData) => {
-    setProfile(updatedData);
     try {
-      await apiFetch("/api/v1/profile", {
+      const resp = await apiFetch("/api/v1/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
 
+      if (!resp.ok) {
+        const errorData = await resp.json().catch(() => ({}));
+        const msg = errorData.detail || "Failed to update profile";
+        alert(msg);
+        throw new Error(msg);
+      }
+
+      const data = await resp.json();
+      if (data?.data) {
+        setProfile(data.data);
+      }
+      if (data?.requires_google_reauth) {
+        alert(data.message || "Email address updated. Please re-verify with Google Auth to connect Gmail for this email.");
+        setIsAuthModalOpen(true);
+      }
+
       // Broadcast memory sync to extension
       window.postMessage({ type: "MEW_PROFILE_SYNC", profile: updatedData }, "*");
     } catch (e) {
       console.warn("Backend sync fallback:", e);
+      throw e;
     }
   };
 
