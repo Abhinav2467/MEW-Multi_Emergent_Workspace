@@ -57,15 +57,10 @@ export default function ResumeStudio({ profile, onUpdateProfile, onRescanResume,
 
   const handleSave = async () => {
     setIsSaving(true);
-    try {
-      await onUpdateProfile(formData);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (err) {
-      console.error("Save profile error:", err);
-    } finally {
-      setIsSaving(false);
-    }
+    await onUpdateProfile(formData);
+    setIsSaving(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const handleRescan = async () => {
