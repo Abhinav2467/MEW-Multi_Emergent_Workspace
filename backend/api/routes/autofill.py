@@ -96,7 +96,7 @@ async def _get_active_profile_data(
         except Exception:
             pass
 
-    record = await prof_repo.get_latest()
+    record = await prof_repo.get_latest_for_user(user_id) if user_id else None
     if record:
         parsed_profile = prof_repo.parse_profile(record)
         data = sync_profile_to_autofill_json(parsed_profile, resume_file_path=record.get("resume_file_path"))

@@ -448,12 +448,15 @@ async def confirm_resume(
 
 @router.get("/api/v1/resume/download-latest")
 async def download_latest_resume(
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     repo = ProfileRepository(conn)
-    record = await repo.get_latest()
+    record = await repo.get_latest_for_user(user["id"])
+    if not record:
+        record = await repo.get_latest()
     if not record or not record.get("resume_file_path"):
-        raise HTTPException(status_code=404, detail="No uploaded resume file found")
+        raise HTTPException(status_code=404, detail="No uploaded resume file found for current user")
 
     file_path = Path(record["resume_file_path"])
     if not file_path.exists():
