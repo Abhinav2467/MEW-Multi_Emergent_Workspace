@@ -106,3 +106,76 @@ async def test_unauthenticated_user_isolation():
         assert current_user["id"] == 1
         assert current_user["email"] == "candidate@mew.ai"
 
+
+@pytest.mark.asyncio
+async def test_e2e_resume_upload_and_history_isolation(tmp_path):
+    """E2E test: Uploading resume via API persists to DB and isolates history per user."""
+    import fitz
+    from fastapi.testclient import TestClient
+    from backend.main import create_app
+    from backend.auth.jwt import create_access_token
+    from backend.storage.database import get_db
+
+    # Create dummy PDF
+    pdf_path = tmp_path / "Jane_Doe_Resume.pdf"
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text(
+        (72, 72),
+        "Jane Doe\njane@example.com\n+1 555 0100\nSkills: Python FastAPI\nExperience\n- Engineer",
+    )
+    doc.save(pdf_path)
+    doc.close()
+
+    async with aiosqlite.connect(":memory:") as conn:
+        conn.row_factory = aiosqlite.Row
+        await run_migrations(conn)
+
+        user_repo = UserRepository(conn)
+        u1 = await user_repo.upsert_google_user(
+            google_id="u1_g", email="user1@example.com", name="User 1"
+        )
+        u2 = await user_repo.upsert_google_user(
+            google_id="u2_g", email="user2@example.com", name="User 2"
+        )
+
+        app = create_app()
+
+        async def override_get_db():
+            yield conn
+
+        app.dependency_overrides[get_db] = override_get_db
+        client = TestClient(app)
+
+        t1 = create_access_token(user_id=u1["id"], email=u1["email"])
+        t2 = create_access_token(user_id=u2["id"], email=u2["email"])
+
+        # 1. User 1 uploads resume
+        with open(pdf_path, "rb") as f:
+            res_up = client.post(
+                "/upload-resume",
+                headers={"Authorization": f"Bearer {t1}"},
+                files={"file": ("Jane_Doe_Resume.pdf", f, "application/pdf")},
+            )
+        assert res_up.status_code == 200, res_up.text
+
+        # 2. User 1 history has 1 resume
+        res_h1 = client.get("/api/v1/resume/history", headers={"Authorization": f"Bearer {t1}"})
+        assert res_h1.status_code == 200
+        data1 = res_h1.json()["data"]
+        assert len(data1) == 1
+        assert data1[0]["filename"] == "Jane_Doe_Resume.pdf"
+
+        # 3. User 2 history is EMPTY (0 resumes)
+        res_h2 = client.get("/api/v1/resume/history", headers={"Authorization": f"Bearer {t2}"})
+        assert res_h2.status_code == 200
+        data2 = res_h2.json()["data"]
+        assert len(data2) == 0
+
+        # 4. Unauthenticated guest history is EMPTY
+        res_guest = client.get("/api/v1/resume/history")
+        assert res_guest.status_code == 200
+        data_guest = res_guest.json()["data"]
+        assert len(data_guest) == 0
+
+
