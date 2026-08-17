@@ -338,6 +338,14 @@ async def get_resume_history(
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
+    if user["id"] == -1:
+        return {
+            "status": "success",
+            "user_id": -1,
+            "user_email": "candidate@mew.ai",
+            "data": [],
+        }
+
     repo = ResumeHistoryRepository(conn)
     history = await repo.list_for_user(user["id"])
     return {

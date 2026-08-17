@@ -102,8 +102,8 @@ async def test_unauthenticated_user_isolation():
         # Call get_current_user_optional without credentials
         current_user = await get_current_user_optional(credentials=None, conn=conn)
 
-        # Must return Guest Candidate (id=1), NOT user 2 (id=2)
-        assert current_user["id"] == 1
+        # Must return Guest Candidate (id=-1), NOT user 2 (id=2)
+        assert current_user["id"] == -1
         assert current_user["email"] == "candidate@mew.ai"
 
 

@@ -462,6 +462,9 @@ async def list_user_applications(
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """List applications strictly isolated for the currently logged in user."""
+    if user["id"] == -1:
+        return {"status": "success", "user_id": -1, "user_email": "candidate@mew.ai", "data": []}
+        
     repo = AppliedJobRepository(conn)
     apps = await repo.list_for_user(user["id"])
     return {"status": "success", "user_id": user["id"], "user_email": user.get("email"), "data": apps}
