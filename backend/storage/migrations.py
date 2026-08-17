@@ -122,6 +122,8 @@ async def run_migrations(conn: aiosqlite.Connection) -> None:
             ON CONFLICT(id) DO NOTHING
             """
         )
+        # Purge legacy guest test records so unauthenticated guest sessions start with clean history
+        await conn.execute("DELETE FROM resume_history WHERE user_id = 1")
     except Exception as exc:
         print(f"[Warning] Seed guest user migration notice: {exc}")
     await conn.commit()

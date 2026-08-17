@@ -82,3 +82,27 @@ async def test_applied_jobs_multi_tenant_isolation():
         user1_jobs = await applied_repo.list_for_user(1)
         assert len(user1_jobs) == 1
         assert user1_jobs[0]["company_name"] == "Acme Corp"
+
+
+@pytest.mark.asyncio
+async def test_unauthenticated_user_isolation():
+    """Verify that unauthenticated optional user dependency returns guest user (id=1)."""
+    from backend.api.deps import get_current_user_optional
+
+    async with aiosqlite.connect(":memory:") as conn:
+        conn.row_factory = aiosqlite.Row
+        await run_migrations(conn)
+
+        user_repo = UserRepository(conn)
+        # Create user 2 with token
+        await user_repo.upsert_google_user(
+            google_id="google_u2", email="u2@example.com", name="User Two", gmail_tokens_json="{}"
+        )
+
+        # Call get_current_user_optional without credentials
+        current_user = await get_current_user_optional(credentials=None, conn=conn)
+
+        # Must return Guest Candidate (id=1), NOT user 2 (id=2)
+        assert current_user["id"] == 1
+        assert current_user["email"] == "candidate@mew.ai"
+
