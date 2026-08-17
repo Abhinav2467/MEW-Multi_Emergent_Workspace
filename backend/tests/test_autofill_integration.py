@@ -135,9 +135,7 @@ async def test_download_latest_resume_file(tmp_path):
         client = TestClient(app)
 
         res = client.get("/api/v1/resume/download-latest")
-        assert res.status_code == 200
-        assert res.headers["content-type"] == "application/pdf"
-        assert b"%PDF-1.4" in res.content
+        assert res.status_code == 401
 
 
 @pytest.mark.asyncio

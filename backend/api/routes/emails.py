@@ -401,9 +401,9 @@ async def public_generate_cold_email(payload: dict[str, Any]):
 from backend.api.deps import get_current_user, get_current_user_optional
 
 @router.post("/api/v1/emails/save-draft")
-async def public_save_draft(
+async def save_draft(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     from backend.agents.cold_email.tools import execute_cold_email
@@ -514,9 +514,9 @@ async def public_save_draft(
 
 
 @router.post("/api/v1/emails/send")
-async def public_send_cold_email(
+async def send_cold_email(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     from backend.agents.cold_email.tools import execute_cold_email

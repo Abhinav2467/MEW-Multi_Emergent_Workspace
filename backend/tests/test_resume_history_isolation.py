@@ -172,10 +172,8 @@ async def test_e2e_resume_upload_and_history_isolation(tmp_path):
         data2 = res_h2.json()["data"]
         assert len(data2) == 0
 
-        # 4. Unauthenticated guest history is EMPTY
+        # 4. Unauthenticated guest history should be blocked with 401
         res_guest = client.get("/api/v1/resume/history")
-        assert res_guest.status_code == 200
-        data_guest = res_guest.json()["data"]
-        assert len(data_guest) == 0
+        assert res_guest.status_code == 401
 
 

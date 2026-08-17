@@ -39,14 +39,12 @@ class UserRepository:
                     "UPDATE users SET email = ?, name = ?, google_refresh_token = ?, google_id = ? WHERE id = ?",
                     (email, name, ref_token, google_id, existing["id"]),
                 )
-            await self.conn.commit()
             return await self.get_by_id(existing["id"])  # type: ignore[return-value]
 
         cursor = await self.conn.execute(
             "INSERT INTO users (google_id, email, name, gmail_tokens_json, google_refresh_token) VALUES (?, ?, ?, ?, ?)",
             (google_id, email, name, gmail_tokens_json, google_refresh_token),
         )
-        await self.conn.commit()
         return await self.get_by_id(cursor.lastrowid)  # type: ignore[return-value]
 
     async def get_by_id(self, user_id: int) -> dict[str, Any] | None:
@@ -73,14 +71,12 @@ class UserRepository:
             "UPDATE users SET gmail_tokens_json = ? WHERE id = ?",
             (tokens_json, user_id),
         )
-        await self.conn.commit()
 
     async def update_google_refresh_token(self, user_id: int, refresh_token: str) -> None:
         await self.conn.execute(
             "UPDATE users SET google_refresh_token = ? WHERE id = ?",
             (refresh_token, user_id),
         )
-        await self.conn.commit()
 
     async def get_active_or_first_user(self) -> dict[str, Any] | None:
         # 1. Check profile.json for email match first
@@ -135,7 +131,6 @@ class ProfileRepository:
                 resume_file_path,
             ),
         )
-        await self.conn.commit()
         return await self.get(cursor.lastrowid)  # type: ignore[arg-type]
 
     async def get(self, profile_id: int) -> dict[str, Any] | None:
@@ -193,7 +188,6 @@ class ProfileRepository:
                 """,
                 (profile.model_dump_json(), profile_id),
             )
-        await self.conn.commit()
         return await self.get(profile_id)  # type: ignore[return-value]
 
     async def confirm(self, profile_id: int) -> dict[str, Any]:
@@ -205,7 +199,6 @@ class ProfileRepository:
             """,
             (profile_id,),
         )
-        await self.conn.commit()
         return await self.get(profile_id)  # type: ignore[return-value]
 
     @staticmethod
@@ -231,7 +224,6 @@ class ReportRepository:
             """,
             (user_id, profile_id, status),
         )
-        await self.conn.commit()
         return await self.get(cursor.lastrowid)  # type: ignore[arg-type]
 
     async def get(self, report_id: int) -> dict[str, Any] | None:
@@ -273,7 +265,6 @@ class ReportRepository:
             """,
             (json_path, excel_path, status, report_id),
         )
-        await self.conn.commit()
         return await self.get(report_id)  # type: ignore[return-value]
 
     async def set_status(self, report_id: int, status: str) -> None:
@@ -281,7 +272,6 @@ class ReportRepository:
             "UPDATE job_reports SET status = ? WHERE id = ?",
             (status, report_id),
         )
-        await self.conn.commit()
 
 
 class JobMatchRepository:
@@ -316,7 +306,6 @@ class JobMatchRepository:
             row = await self.get(cursor.lastrowid)  # type: ignore[arg-type]
             if row:
                 created.append(row)
-        await self.conn.commit()
         return created
 
     async def get(self, match_id: int) -> dict[str, Any] | None:
@@ -349,7 +338,6 @@ class JobMatchRepository:
             """,
             (hr_recruiter_name, hr_recruiter_email, match_id),
         )
-        await self.conn.commit()
 
 
 class DraftRepository:
@@ -372,7 +360,6 @@ class DraftRepository:
             """,
             (user_id, job_match_id, gmail_draft_id, status, error),
         )
-        await self.conn.commit()
         return await self.get(cursor.lastrowid)  # type: ignore[arg-type]
 
     async def get(self, draft_id: int) -> dict[str, Any] | None:
@@ -407,7 +394,6 @@ class DraftRepository:
             """,
             (draft_id,),
         )
-        await self.conn.commit()
 
 
 class AppliedJobRepository:
@@ -455,7 +441,6 @@ class AppliedJobRepository:
                     existing[0],
                 ),
             )
-            await self.conn.commit()
             res = await self.get_by_id(existing[0])
             return res if res else {}
 
@@ -480,7 +465,6 @@ class AppliedJobRepository:
                 1 if cold_email_sent else 0,
             ),
         )
-        await self.conn.commit()
         res = await self.get_by_id(cursor.lastrowid)
         return res if res else {}
 
@@ -525,7 +509,6 @@ class AppliedJobRepository:
                 """,
                 (1 if cold_email_sent else 0, user_id, company_name),
             )
-        await self.conn.commit()
 
 
 class ResumeHistoryRepository:
@@ -547,7 +530,6 @@ class ResumeHistoryRepository:
             """,
             (user_id, filename, file_size_bytes, status),
         )
-        await self.conn.commit()
         row_id = cursor.lastrowid
         cursor_res = await self.conn.execute(
             "SELECT * FROM resume_history WHERE id = ?", (row_id,)

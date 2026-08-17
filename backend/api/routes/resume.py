@@ -334,18 +334,10 @@ async def public_upload_resume(
 
 @router.get("/api/v1/resume/history")
 async def get_resume_history(
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Retrieve resume upload history strictly for the currently logged-in user."""
-    if user["id"] == -1:
-        return {
-            "status": "success",
-            "user_id": -1,
-            "user_email": "candidate@mew.ai",
-            "data": [],
-        }
-
     repo = ResumeHistoryRepository(conn)
     history = await repo.list_for_user(user["id"])
     return {
@@ -456,7 +448,7 @@ async def confirm_resume(
 
 @router.get("/api/v1/resume/download-latest")
 async def download_latest_resume(
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     repo = ProfileRepository(conn)

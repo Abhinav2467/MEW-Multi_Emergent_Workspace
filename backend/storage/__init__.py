@@ -24,5 +24,6 @@ async def get_db():
     conn = await connect()
     try:
         yield conn
+        await conn.commit()
     finally:
         await conn.close()

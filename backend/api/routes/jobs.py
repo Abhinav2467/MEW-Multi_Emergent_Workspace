@@ -415,7 +415,7 @@ def _discover_hr_for_application(
 @router.post("/api/v1/jobs/apply")
 async def record_job_application(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Record an intentional application for the currently logged in user."""
@@ -458,13 +458,10 @@ async def record_job_application(
 
 @router.get("/api/v1/jobs/applications")
 async def list_user_applications(
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """List applications strictly isolated for the currently logged in user."""
-    if user["id"] == -1:
-        return {"status": "success", "user_id": -1, "user_email": "candidate@mew.ai", "data": []}
-        
     repo = AppliedJobRepository(conn)
     apps = await repo.list_for_user(user["id"])
     return {"status": "success", "user_id": user["id"], "user_email": user.get("email"), "data": apps}
@@ -473,7 +470,7 @@ async def list_user_applications(
 @router.post("/api/v1/jobs/mark-cold-email-sent")
 async def mark_cold_email_sent(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user_optional),
+    user: dict[str, Any] = Depends(get_current_user),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     """Mark cold email as sent for a job position for the currently logged in user."""
