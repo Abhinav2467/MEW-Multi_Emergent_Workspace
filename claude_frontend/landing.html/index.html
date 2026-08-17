@@ -2035,9 +2035,12 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 }
             }
 
+            const isOffline = window.MewApiClient && !window.MewApiClient.isOnline;
+            
             // 3. Local saved state fallback
+            // Only use fallback if we actually have a valid token (or if offline)
             if (!autoAuth && window.MewAppState.user && window.MewAppState.user.isAuthenticated) {
-                if (!storedToken) {
+                if (!isOffline && !localStorage.getItem('mew_jwt_token')) {
                     window.MewAppState.user.isAuthenticated = false;
                     window.MewAppState.save();
                 } else {
@@ -2046,7 +2049,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             }
 
             // 4. Restore session from localStorage session flag (survives refresh without JWT)
-            if (!autoAuth && localStorage.getItem('mew_session_active') === '1') {
+            // Only permit offline. If online, a missing/invalid JWT means we are NOT authenticated.
+            if (!autoAuth && isOffline && localStorage.getItem('mew_session_active') === '1') {
                 const saved = (() => { try { return JSON.parse(localStorage.getItem('mew_app_state') || '{}'); } catch(e) { return {}; } })();
                 if (saved?.user?.isAuthenticated) {
                     Object.assign(window.MewAppState.user, saved.user);
