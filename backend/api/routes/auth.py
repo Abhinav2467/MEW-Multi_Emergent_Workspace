@@ -28,16 +28,16 @@ def _user_out(user: dict[str, Any]) -> UserOut:
 
 
 @router.get("/google", response_model=AuthUrlResponse)
-async def google_auth_url() -> AuthUrlResponse:
+async def google_auth_url(redirect_uri: str | None = Query(None)) -> AuthUrlResponse:
     try:
-        url = build_auth_url()
+        url = build_auth_url(redirect_uri=redirect_uri)
     except Exception:
         from urllib.parse import urlencode
         client_id = "687818556583-mrmcf9jupect5reccpfbsc3lettdr3rd.apps.googleusercontent.com"
         scopes = "openid email profile https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send"
         params = {
             "client_id": client_id,
-            "redirect_uri": "http://localhost",
+            "redirect_uri": redirect_uri or "http://localhost",
             "response_type": "code",
             "scope": scopes,
             "access_type": "offline",
@@ -50,10 +50,11 @@ async def google_auth_url() -> AuthUrlResponse:
 @router.get("/callback", response_model=TokenResponse)
 async def google_callback(
     code: str = Query(...),
+    redirect_uri: str | None = Query(None),
     conn: aiosqlite.Connection = Depends(get_db),
 ) -> TokenResponse:
     try:
-        oauth = await exchange_code_for_tokens(code)
+        oauth = await exchange_code_for_tokens(code, redirect_uri=redirect_uri)
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"OAuth exchange failed: {exc}") from exc
 

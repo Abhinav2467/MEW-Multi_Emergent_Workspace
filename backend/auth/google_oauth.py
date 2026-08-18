@@ -23,12 +23,12 @@ SCOPES = [
 ]
 
 
-def build_auth_url(state: str | None = None) -> str:
+def build_auth_url(state: str | None = None, redirect_uri: str | None = None) -> str:
     oauth = resolve_google_oauth_client()
 
     params: dict[str, str] = {
         "client_id": oauth.client_id,
-        "redirect_uri": oauth.redirect_uri,
+        "redirect_uri": redirect_uri or oauth.redirect_uri or "http://localhost",
         "response_type": "code",
         "scope": " ".join(SCOPES),
         "access_type": "offline",
@@ -40,18 +40,28 @@ def build_auth_url(state: str | None = None) -> str:
     return f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
 
 
-async def exchange_code_for_tokens(code: str) -> dict[str, Any]:
+async def exchange_code_for_tokens(code: str, redirect_uri: str | None = None) -> dict[str, Any]:
     """Exchange authorization code for tokens and user info."""
     oauth = resolve_google_oauth_client()
 
-    redirect_uris_to_try = [
+    redirect_uris_to_try = []
+    if redirect_uri:
+        redirect_uris_to_try.append(redirect_uri)
+        if redirect_uri.endswith("/"):
+            redirect_uris_to_try.append(redirect_uri[:-1])
+
+    defaults = [
         oauth.redirect_uri,
         "http://localhost",
         "http://localhost:8000/auth/callback",
         "https://developers.google.com/oauthplayground",
         "urn:ietf:wg:oauth:2.0:oob",
-        "http://localhost:3000/auth/callback"
+        "http://localhost:3000/auth/callback",
     ]
+    for d in defaults:
+        if d and d not in redirect_uris_to_try:
+            redirect_uris_to_try.append(d)
+
     token_resp = None
     last_exc = None
 

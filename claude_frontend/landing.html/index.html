@@ -1906,7 +1906,6 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             const fallbackUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent`;
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
-                // Fetch backend URL then open in same tab redirect trick
                 window.MewApiClient.getAuthUrl().then(data => {
                     const url = (data && data.url) ? data.url : fallbackUrl;
                     window.open(url, '_blank');
@@ -1918,17 +1917,28 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
         async function handleKeyLoginSubmit() {
             const keyInput = document.getElementById('auth-private-key');
-            const key = keyInput ? keyInput.value.trim() : '';
+            let key = keyInput ? keyInput.value.trim() : '';
 
             if (!key) {
-                alert('Please paste your Google Authorization Code / Private Access Key.');
+                alert('Please paste your Google Authorization Code.');
                 return;
+            }
+
+            // Auto-extract code if user pasted a full redirect URL (e.g. http://localhost/?code=4/0A... or https://.../?code=...)
+            if (key.includes('code=')) {
+                try {
+                    const urlObj = new URL(key.startsWith('http') ? key : `http://localhost/${key}`);
+                    key = urlObj.searchParams.get('code') || key;
+                } catch (e) {
+                    const match = key.match(/code=([^&]+)/);
+                    if (match) key = decodeURIComponent(match[1]);
+                }
             }
 
             const btn = document.getElementById('btn-login-verify');
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = `<span class="material-symbols-outlined text-lg animate-spin">sync</span> Verifying Access Key...`;
+                btn.innerHTML = `<span class="material-symbols-outlined text-lg animate-spin">sync</span> Connecting Gmail...`;
             }
 
             // Real backend code exchange
@@ -1945,27 +1955,43 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             window.MewAppState.user.email = data.user.email || '';
                             window.MewAppState.user.name = data.user.name || '';
                         }
+                        window.MewAppState.user.isAuthenticated = true;
+                        window.MewAppState.user.privateKey = key;
+                        window.MewAppState.completedSteps.landing = true;
+                        localStorage.setItem('mew_session_active', '1');
+                        window.MewAppState.save();
+
+                        MewRouter.syncUI();
+
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<span class="material-symbols-outlined text-lg">check_circle</span> Connected!`;
+                        }
+
+                        alert(`✓ Connected to Google (${data.user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                        setTimeout(() => MewRouter.navigateTo('parser'), 400);
+                        return;
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        alert(`Google Authentication Error: ${err.detail || 'Failed to exchange authorization code. Please generate a fresh code and try again.'}`);
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<span>Verify & Authenticate</span>`;
+                        }
+                        return;
                     }
-                } catch (e) { console.warn('Backend code verification error', e); }
+                } catch (e) {
+                    console.warn('Backend code verification error', e);
+                    alert(`Network error during Google authentication: ${e.message}`);
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = `<span>Verify & Authenticate</span>`;
+                    }
+                    return;
+                }
+            } else {
+                alert(`Backend is currently offline or unreachable. Operating in local mode.`);
             }
-
-            // Mark user authenticated and unlock app
-            window.MewAppState.user.isAuthenticated = true;
-            window.MewAppState.user.privateKey = key;
-            window.MewAppState.completedSteps.landing = true;
-            localStorage.setItem('mew_session_active', '1'); // persist across refresh
-            window.MewAppState.save();
-
-            // Sync UI header & unlock views
-            MewRouter.syncUI();
-
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = `<span class="material-symbols-outlined text-lg">check_circle</span> Access Granted!`;
-            }
-
-            // Navigate to Resume Parser view
-            setTimeout(() => MewRouter.navigateTo('parser'), 400);
         }
 
         async function checkOAuthCallback() {
@@ -1974,7 +2000,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             if (code) {
                 const keyInput = document.getElementById('auth-private-key');
                 if (keyInput) keyInput.value = code;
-                handleKeyLoginSubmit();
+                window.history.replaceState({}, document.title, window.location.pathname);
+                await handleKeyLoginSubmit();
             }
         }
 
@@ -3892,8 +3919,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        const emailDisplay = json.user_email || window.MewAppState?.user?.email || 'your connected Gmail account';
-                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${emailDisplay})`);
+                        alert(json.message || `✓ Cold email saved directly as a draft!`);
                     } else {
                         alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
                     }
@@ -3936,8 +3962,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        const emailDisplay = json.user_email || window.MewAppState?.user?.email || 'your connected Gmail account';
-                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${emailDisplay})`);
+                        alert(json.message || `✓ Cold email saved directly as a draft!`);
                     } else {
                         alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
                     }
