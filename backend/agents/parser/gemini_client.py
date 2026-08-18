@@ -125,7 +125,7 @@ class GeminiParseClient:
         self,
         *,
         api_key: str | None,
-        model: str = "gemini-1.5-flash",
+        model: str = "gemini-2.5-flash",
         client: Any | None = None,
     ) -> None:
         if client is None and not api_key:
@@ -191,9 +191,9 @@ class GeminiParseClient:
 
         models_to_try = [
             self.model,
-            "gemini-1.5-flash",
-            "gemini-2.0-flash",
             "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
             "gemini-1.5-pro",
         ]
         unique_models = list(dict.fromkeys([m for m in models_to_try if m]))
