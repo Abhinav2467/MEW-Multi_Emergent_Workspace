@@ -437,7 +437,8 @@
                 <div class="flex items-center gap-2.5 cursor-pointer group" onclick="MewRouter.navigateTo('landing')">
                     <img src="website-logo.jpg" alt="Mew Logo"
                         class="w-9 h-9 rounded-xl object-cover group-hover:scale-105 transition-transform" />
-                    <span class="font-extrabold text-lg tracking-tight text-[#006b5d]">MEW-Multi Emergent Workspace</span>
+                    <span class="font-extrabold text-lg tracking-tight text-[#006b5d]">MEW-Multi Emergent
+                        Workspace</span>
                 </div>
 
                 <!-- Workflow Progress Stepper -->
@@ -587,18 +588,23 @@
                 </div>
 
                 <!-- Profile Menu with Sign Out Dropdown -->
-                <div class="flex items-center gap-2 pl-3 border-l border-outline-variant/40 relative" id="profile-menu-wrapper">
-                    <button onclick="toggleProfileDropdown(event)" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container cursor-pointer transition-colors">
+                <div class="flex items-center gap-2 pl-3 border-l border-outline-variant/40 relative"
+                    id="profile-menu-wrapper">
+                    <button onclick="toggleProfileDropdown(event)"
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container cursor-pointer transition-colors">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span id="user-display-name">Candidate Active</span>
                         <span class="material-symbols-outlined text-[13px] ml-0.5">expand_more</span>
                     </button>
-                    <div id="profile-dropdown" class="hidden absolute right-0 top-full mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                    <div id="profile-dropdown"
+                        class="hidden absolute right-0 top-full mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
                         <div class="px-4 py-2.5 border-b border-slate-100">
                             <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Signed in as</p>
-                            <p id="profile-dropdown-name" class="text-xs font-bold text-slate-800 truncate mt-0.5">Candidate</p>
+                            <p id="profile-dropdown-name" class="text-xs font-bold text-slate-800 truncate mt-0.5">
+                                Candidate</p>
                         </div>
-                        <button onclick="logoutUser()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-mono font-bold text-red-600 hover:bg-red-50 transition-colors">
+                        <button onclick="logoutUser()"
+                            class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-mono font-bold text-red-600 hover:bg-red-50 transition-colors">
                             <span class="material-symbols-outlined text-sm">logout</span>
                             <span>Sign Out</span>
                         </button>
@@ -647,7 +653,8 @@
                                 <!-- Subtitle Paragraph -->
                                 <p
                                     class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl mb-8 font-normal">
-                                    MEW-Multi Emergent Workspace deploys autonomous AI agents that parse your skills, scour global opportunities,
+                                    MEW-Multi Emergent Workspace deploys autonomous AI agents that parse your skills,
+                                    scour global opportunities,
                                     and negotiate matches on your behalf—all while you sleep.
                                 </p>
 
@@ -907,8 +914,10 @@
                         <div class="flex items-center gap-3">
                             <img src="website-logo.jpg" alt="Mew Logo"
                                 class="w-7 h-7 rounded-lg object-cover shadow-xs" />
-                            <span class="font-headline-sm text-headline-sm text-on-surface font-bold">MEW-Multi Emergent Workspace</span>
-                            <span class="text-on-surface-variant font-label-sm">© 2026 MEW-Multi Emergent Workspace</span>
+                            <span class="font-headline-sm text-headline-sm text-on-surface font-bold">MEW-Multi Emergent
+                                Workspace</span>
+                            <span class="text-on-surface-variant font-label-sm">© 2026 MEW-Multi Emergent
+                                Workspace</span>
                         </div>
                         <div class="flex gap-8">
                             <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
@@ -931,7 +940,8 @@
                             <h1 class="font-display-lg text-headline-md font-bold text-on-surface m-0 p-0">Parser
                                 Workspace</h1>
                             <p class="font-body-lg text-body-md text-on-surface-variant m-0 p-0 max-w-[600px]">
-                                Upload candidate resumes to automatically extract structured data using MEW-Multi Emergent Workspace's
+                                Upload candidate resumes to automatically extract structured data using MEW-Multi
+                                Emergent Workspace's
                                 intelligent parsing agents.
                             </p>
                         </div>
@@ -1547,7 +1557,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             <section id="view-dashboard" class="view-section w-full p-12">
                 <div class="max-w-4xl mx-auto">
                     <h1 class="text-headline-md font-headline-md text-on-surface mb-4">Dashboard & Analytics</h1>
-                    <p class="text-body-lg text-on-surface-variant mb-8">Welcome back to your MEW-Multi Emergent Workspace agent telemetry
+                    <p class="text-body-lg text-on-surface-variant mb-8">Welcome back to your MEW-Multi Emergent
+                        Workspace agent telemetry
                         control center.</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-surface-gray p-6 rounded-2xl border border-outline-variant/30">
@@ -2036,7 +2047,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             }
 
             const isOffline = window.MewApiClient && !window.MewApiClient.isOnline;
-            
+
             // 3. Local saved state fallback
             // Only use fallback if we actually have a valid token (or if offline)
             if (!autoAuth && window.MewAppState.user && window.MewAppState.user.isAuthenticated) {
@@ -2051,7 +2062,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             // 4. Restore session from localStorage session flag (survives refresh without JWT)
             // Only permit offline. If online, a missing/invalid JWT means we are NOT authenticated.
             if (!autoAuth && isOffline && localStorage.getItem('mew_session_active') === '1') {
-                const saved = (() => { try { return JSON.parse(localStorage.getItem('mew_app_state') || '{}'); } catch(e) { return {}; } })();
+                const saved = (() => { try { return JSON.parse(localStorage.getItem('mew_app_state') || '{}'); } catch (e) { return {}; } })();
                 if (saved?.user?.isAuthenticated) {
                     Object.assign(window.MewAppState.user, saved.user);
                     Object.assign(window.MewAppState.resume, saved.resume || {});
@@ -2108,7 +2119,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const wrapper = document.getElementById('profile-menu-wrapper');
             if (wrapper && !wrapper.contains(e.target)) {
                 const dd = document.getElementById('profile-dropdown');
@@ -2169,7 +2180,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 const localHist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
                 if (localHist.length > 0) {
                     queue.innerHTML = localHist.map(item => {
-                        const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024*1024)).toFixed(1) + ' MB' : '—';
+                        const sizeMb = item.file_size_bytes ? (item.file_size_bytes / (1024 * 1024)).toFixed(1) + ' MB' : '—';
                         const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
                         return `<div class="flex flex-col gap-2 p-3 bg-surface-container-lowest border border-outline-variant/40 rounded-xl cursor-pointer hover:shadow-sm transition-all">
                             <div class="flex items-start justify-between">
@@ -2186,7 +2197,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     }).join('');
                     return;
                 }
-            } catch(e) {}
+            } catch (e) { }
 
             queue.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-5 px-4 text-center gap-1.5 text-on-surface-variant bg-surface-gray/50 rounded-xl border border-outline-variant/20">
@@ -2431,7 +2442,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             const hist = JSON.parse(localStorage.getItem('mew_resume_history') || '[]');
                             hist.unshift({ filename, file_size_bytes: fileObj?.size || 0, created_at: new Date().toISOString(), name: candName });
                             localStorage.setItem('mew_resume_history', JSON.stringify(hist.slice(0, 20)));
-                        } catch(e) {}
+                        } catch (e) { }
 
                         updateSkillsUI(candSkills);
                         renderExperienceUI(candExp);
@@ -3479,19 +3490,37 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">send</span> Sending...`;
             }
 
+            const subject = document.getElementById('studio-email-subject')?.value || document.getElementById('modal-studio-email-subject')?.value || `Inquiry for ${activeJobTitle}`;
+            const body = document.getElementById('studio-email-body')?.value || document.getElementById('modal-studio-email-body')?.value || '';
+
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
-                    await fetch(`${window.MewApiClient.baseUrl}/api/v1/emails/send`, {
+                    const res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/emails/send`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', ...window.MewApiClient.getHeaders() },
                         body: JSON.stringify({
+                            company: activeCompany,
+                            role: activeJobTitle,
                             to_email: activeHrEmail,
+                            hr_email: activeHrEmail,
                             to_name: activeHrName,
+                            hr_name: activeHrName,
                             subject: subject,
                             body: body
                         })
                     });
-                } catch (e) { console.warn('Send outreach endpoint warning', e); }
+                    const json = await res.json();
+                    if (!res.ok) {
+                        alert(`Send Error: ${json.detail || 'Failed to dispatch email'}`);
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<span>Send Outreach via Gmail</span> <span class="material-symbols-outlined text-[15px]">send</span>`;
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Send outreach endpoint warning', e);
+                }
             }
 
             await markColdEmailSentForActiveJob();
@@ -3793,21 +3822,34 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">send</span> Sending...`;
             }
 
-            const subject = document.getElementById('modal-studio-email-subject')?.value || `Inquiry: ${activeJobTitle}`;
-            const body = document.getElementById('modal-studio-email-body')?.value || '';
+            const subject = document.getElementById('modal-studio-email-subject')?.value || document.getElementById('studio-email-subject')?.value || `Inquiry for ${activeJobTitle}`;
+            const body = document.getElementById('modal-studio-email-body')?.value || document.getElementById('studio-email-body')?.value || '';
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
-                    await fetch(`${window.MewApiClient.baseUrl}/api/v1/emails/send`, {
+                    const res = await fetch(`${window.MewApiClient.baseUrl}/api/v1/emails/send`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', ...window.MewApiClient.getHeaders() },
                         body: JSON.stringify({
+                            company: activeCompany,
+                            role: activeJobTitle,
                             to_email: activeHrEmail,
+                            hr_email: activeHrEmail,
                             to_name: activeHrName,
+                            hr_name: activeHrName,
                             subject: subject,
                             body: body
                         })
                     });
+                    const json = await res.json();
+                    if (!res.ok) {
+                        alert(`Send Error: ${json.detail || 'Failed to dispatch email'}`);
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<span>Send Outreach via Gmail</span> <span class="material-symbols-outlined text-[15px]">send</span>`;
+                        }
+                        return;
+                    }
                 } catch (e) { console.warn('Send outreach modal warning', e); }
             }
 
@@ -3831,8 +3873,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">draft</span> Saving Draft...`;
             }
 
-            const subject = document.getElementById('modal-studio-email-subject')?.value || document.getElementById('email-subject')?.value || `Inquiry for ${activeJobTitle}`;
-            const body = document.getElementById('modal-studio-email-body')?.value || document.getElementById('email-body')?.value || '';
+            const subject = document.getElementById('studio-email-subject')?.value || document.getElementById('modal-studio-email-subject')?.value || `Inquiry for ${activeJobTitle}`;
+            const body = document.getElementById('studio-email-body')?.value || document.getElementById('modal-studio-email-body')?.value || '';
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
@@ -3875,8 +3917,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-spin">draft</span> Saving Draft...`;
             }
 
-            const subject = document.getElementById('modal-studio-email-subject')?.value || `Inquiry for ${activeJobTitle}`;
-            const body = document.getElementById('modal-studio-email-body')?.value || '';
+            const subject = document.getElementById('modal-studio-email-subject')?.value || document.getElementById('studio-email-subject')?.value || `Inquiry for ${activeJobTitle}`;
+            const body = document.getElementById('modal-studio-email-body')?.value || document.getElementById('studio-email-body')?.value || '';
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
@@ -3894,7 +3936,8 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${window.MewAppState.user.email})`);
+                        const emailDisplay = json.user_email || window.MewAppState?.user?.email || 'your connected Gmail account';
+                        alert(`✓ Cold email saved directly as a draft in your Gmail account! (${emailDisplay})`);
                     } else {
                         alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
                     }

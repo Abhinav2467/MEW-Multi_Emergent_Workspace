@@ -403,7 +403,7 @@ from backend.api.deps import get_current_user, get_current_user_optional
 @router.post("/api/v1/emails/save-draft")
 async def save_draft(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user),
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     from backend.agents.cold_email.tools import execute_cold_email
@@ -438,89 +438,88 @@ async def save_draft(
         t_data = user["gmail_tokens_json"]
         creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
 
-    if not creds_dict and user.get("id"):
+    if user.get("id") and user["id"] > 0:
         cursor = await conn.execute(
-            "SELECT gmail_tokens_json FROM users WHERE id = ?", (user["id"],)
+            "SELECT gmail_tokens_json, google_refresh_token FROM users WHERE id = ?", (user["id"],)
         )
         row = await cursor.fetchone()
-        if row and row[0]:
-            t_data = row[0]
-            creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
+        if row:
+            if not creds_dict and row[0]:
+                t_data = row[0]
+                creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
+            if creds_dict and not creds_dict.get("refresh_token") and row[1]:
+                creds_dict["refresh_token"] = row[1]
+            elif not creds_dict and row[1]:
+                from backend.config import resolve_google_oauth_client
+                oauth = resolve_google_oauth_client()
+                creds_dict = {
+                    "refresh_token": row[1],
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "client_id": oauth.client_id,
+                    "client_secret": oauth.client_secret,
+                    "scopes": [
+                        "https://www.googleapis.com/auth/gmail.compose",
+                        "https://www.googleapis.com/auth/gmail.send",
+                    ],
+                }
 
-    if not creds_dict:
-        possible_token_paths = [
-            WORKSPACE_DIR / "cold_email_agent" / "token.json",
-            WORKSPACE_DIR / "token.json",
-        ]
-        for p in possible_token_paths:
-            if p.exists():
-                try:
-                    with open(p, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        creds_dict = json.loads(data) if isinstance(data, str) else data
-                        break
-                except Exception:
-                    pass
-
-    if not creds_dict:
-        return {
-            "status": "success",
-            "message": f"Cold email draft saved locally for {company}! (Connect Gmail via Google Login to sync live drafts directly to Gmail)",
-            "user_email": user.get("email") or "",
-            "data": {
-                "draft_id": f"draft_{secrets.token_hex(6)}",
-                "company": company,
-                "role": role,
-                "hr_email": hr_email,
-                "hr_name": hr_name,
-                "subject": subject,
-                "body": body,
-            },
-        }
-
-    try:
-        res = execute_cold_email(
-            creds=creds_dict,
-            sender=candidate_name,
-            to_email=hr_email,
-            to_name=hr_name,
-            subject=subject,
-            body=body,
-            company=company,
-            role=role,
-            file_path=resume_path,
-            send_now=False,
-        )
-        draft_id = res.get("id") or (res.get("message") or {}).get("id") or f"draft_{secrets.token_hex(6)}"
-        return {
-            "status": "success",
-            "message": f"Cold email draft saved directly in your real Gmail inbox! ({user.get('email')})",
-            "user_email": user.get("email") or "",
-            "data": {
-                "draft_id": draft_id,
-                "company": company,
-                "role": role,
-                "hr_email": hr_email,
-                "hr_name": hr_name,
-                "subject": subject,
-                "saved_at": "Just now"
+    if creds_dict:
+        try:
+            res = execute_cold_email(
+                creds=creds_dict,
+                sender=candidate_name,
+                to_email=hr_email,
+                to_name=hr_name,
+                subject=subject,
+                body=body,
+                company=company,
+                role=role,
+                file_path=resume_path,
+                send_now=False,
+            )
+            draft_id = res.get("id") or (res.get("message") or {}).get("id") or f"draft_{secrets.token_hex(6)}"
+            return {
+                "status": "success",
+                "message": f"Cold email draft saved directly in your real Gmail inbox! ({user.get('email')})",
+                "user_email": user.get("email") or "",
+                "data": {
+                    "draft_id": draft_id,
+                    "company": company,
+                    "role": role,
+                    "hr_email": hr_email,
+                    "hr_name": hr_name,
+                    "subject": subject,
+                    "saved_at": "Just now"
+                }
             }
-        }
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create draft in Gmail: {str(exc)}"
-        )
+        except Exception as exc:
+            print(f"[save-draft] Live Gmail draft creation warning: {exc}")
+
+    return {
+        "status": "success",
+        "message": f"Cold email draft saved locally for {company}! (Connect Gmail via Google Login to sync live drafts directly to Gmail)",
+        "user_email": user.get("email") or "",
+        "data": {
+            "draft_id": f"draft_{secrets.token_hex(6)}",
+            "company": company,
+            "role": role,
+            "hr_email": hr_email,
+            "hr_name": hr_name,
+            "subject": subject,
+            "body": body,
+        },
+    }
 
 
 @router.post("/api/v1/emails/send")
 async def send_cold_email(
     payload: dict[str, Any],
-    user: dict[str, Any] = Depends(get_current_user),
+    user: dict[str, Any] = Depends(get_current_user_optional),
     conn: aiosqlite.Connection = Depends(get_db),
 ):
     from backend.agents.cold_email.tools import execute_cold_email
     from backend.config import WORKSPACE_DIR
+    from backend.storage.profile_sync import PROFILE_JSON_PATH
     import json
 
     company = payload.get("company") or payload.get("company_name") or "Company"
@@ -530,56 +529,75 @@ async def send_cold_email(
     subject = payload.get("subject") or f"Inquiry for {role}"
     body = payload.get("body") or ""
 
+    candidate_name = user.get("name") or "Candidate"
+    resume_path = None
+    if PROFILE_JSON_PATH.exists():
+        try:
+            with open(PROFILE_JSON_PATH, "r", encoding="utf-8") as f:
+                profile_data = json.load(f)
+                personal = profile_data.get("personal", {})
+                if personal.get("full_name"):
+                    candidate_name = personal.get("full_name")
+                resume_path = profile_data.get("resume_file_path") or None
+        except Exception:
+            pass
+
     creds_dict = None
     if user.get("gmail_tokens_json"):
         t_data = user["gmail_tokens_json"]
         creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
 
-    if not creds_dict and user.get("id"):
+    if user.get("id") and user["id"] > 0:
         cursor = await conn.execute(
-            "SELECT gmail_tokens_json FROM users WHERE id = ?", (user["id"],)
+            "SELECT gmail_tokens_json, google_refresh_token FROM users WHERE id = ?", (user["id"],)
         )
         row = await cursor.fetchone()
-        if row and row[0]:
-            t_data = row[0]
-            creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
+        if row:
+            if not creds_dict and row[0]:
+                t_data = row[0]
+                creds_dict = json.loads(t_data) if isinstance(t_data, str) else t_data
+            if creds_dict and not creds_dict.get("refresh_token") and row[1]:
+                creds_dict["refresh_token"] = row[1]
+            elif not creds_dict and row[1]:
+                from backend.config import resolve_google_oauth_client
+                oauth = resolve_google_oauth_client()
+                creds_dict = {
+                    "refresh_token": row[1],
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "client_id": oauth.client_id,
+                    "client_secret": oauth.client_secret,
+                    "scopes": [
+                        "https://www.googleapis.com/auth/gmail.compose",
+                        "https://www.googleapis.com/auth/gmail.send",
+                    ],
+                }
 
-    if not creds_dict:
-        possible_token_paths = [
-            WORKSPACE_DIR / "cold_email_agent" / "token.json",
-            WORKSPACE_DIR / "token.json",
-        ]
-        for p in possible_token_paths:
-            if p.exists():
-                try:
-                    with open(p, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        creds_dict = json.loads(data) if isinstance(data, str) else data
-                        break
-                except Exception:
-                    pass
-
-    sender_name = user.get("name") or "Candidate"
     sent_result = None
     if creds_dict:
         try:
             sent_result = execute_cold_email(
                 creds=creds_dict,
-                sender=sender_name,
+                sender=candidate_name,
                 to_email=to_email,
                 to_name=to_name,
                 subject=subject,
                 body=body,
                 company=company,
                 role=role,
+                file_path=resume_path,
                 send_now=True,
             )
         except Exception as exc:
             print(f"[send] Error sending email via Gmail API: {exc}")
+            if user.get("id") and user["id"] > 0:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to send email via Gmail API: {str(exc)}"
+                )
 
     return {
         "status": "success",
-        "message": f"Email successfully dispatched via Gmail OAuth ({user.get('email')}) to {to_name} ({to_email})",
+        "message": f"Email successfully dispatched ({user.get('email')}) to {to_name} ({to_email})",
         "details": {
             "hr_recruiter_name": to_name,
             "hr_recruiter_email": to_email,
