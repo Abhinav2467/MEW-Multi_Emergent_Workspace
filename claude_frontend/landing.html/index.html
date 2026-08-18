@@ -1899,39 +1899,93 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             }
         };
 
+        // Real-time postMessage listener from Google OAuth popup / bridge window
+        window.addEventListener('message', async (event) => {
+            if (event.data && event.data.type === 'MEW_GOOGLE_AUTH_SUCCESS' && event.data.token) {
+                const { token, user } = event.data;
+                localStorage.setItem('mew_jwt_token', token);
+                localStorage.setItem('mew_session_active', '1');
+                if (window.MewApiClient) window.MewApiClient.token = token;
+                window.MewAppState.user.isAuthenticated = true;
+                if (user) {
+                    window.MewAppState.user.email = user.email || '';
+                    window.MewAppState.user.name = user.name || '';
+                }
+                window.MewAppState.completedSteps.landing = true;
+                window.MewAppState.save();
+                MewRouter.syncUI();
+
+                alert(`✓ Connected to Google (${user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                setTimeout(() => MewRouter.navigateTo('parser'), 350);
+            }
+        });
+
         // Auth Handlers
         function openGoogleAuthWindow() {
+            const origin = window.location.origin;
             const fallbackClientId = '687818556583-mrmcf9jupect5reccpfbsc3lettdr3rd.apps.googleusercontent.com';
             const fallbackScopes = 'openid email profile https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send';
-            const fallbackUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent`;
+            const fallbackUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${fallbackClientId}&redirect_uri=${encodeURIComponent('http://localhost')}&response_type=code&scope=${encodeURIComponent(fallbackScopes)}&access_type=offline&prompt=consent&state=${encodeURIComponent(origin)}`;
 
             if (window.MewApiClient && window.MewApiClient.isOnline) {
-                window.MewApiClient.getAuthUrl().then(data => {
-                    const url = (data && data.url) ? data.url : fallbackUrl;
-                    window.open(url, '_blank');
-                }).catch(() => window.open(fallbackUrl, '_blank'));
+                fetch(`${window.MewApiClient.baseUrl}/auth/google?state=${encodeURIComponent(origin)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const url = (data && data.url) ? data.url : fallbackUrl;
+                        window.open(url, '_blank', 'width=580,height=680');
+                    })
+                    .catch(() => window.open(fallbackUrl, '_blank', 'width=580,height=680'));
             } else {
-                window.open(fallbackUrl, '_blank');
+                window.open(fallbackUrl, '_blank', 'width=580,height=680');
             }
         }
 
         async function handleKeyLoginSubmit() {
             const keyInput = document.getElementById('auth-private-key');
-            let key = keyInput ? keyInput.value.trim() : '';
+            let rawInput = keyInput ? keyInput.value.trim() : '';
 
-            if (!key) {
-                alert('Please paste your Google Authorization Code.');
+            if (!rawInput) {
+                alert('Please paste your Google Authorization Code or Access Token.');
                 return;
             }
 
-            // Auto-extract code if user pasted a full redirect URL (e.g. http://localhost/?code=4/0A... or https://.../?code=...)
-            if (key.includes('code=')) {
+            let token = '';
+            let code = '';
+
+            // Case A: User pasted JSON response {"access_token": "ey...", ...}
+            if (rawInput.startsWith('{') && rawInput.endsWith('}')) {
                 try {
-                    const urlObj = new URL(key.startsWith('http') ? key : `http://localhost/${key}`);
-                    key = urlObj.searchParams.get('code') || key;
-                } catch (e) {
-                    const match = key.match(/code=([^&]+)/);
-                    if (match) key = decodeURIComponent(match[1]);
+                    const parsed = JSON.parse(rawInput);
+                    if (parsed.access_token) token = parsed.access_token;
+                } catch(e) {}
+            }
+
+            // Case B: User pasted a full URL
+            if (!token && (rawInput.includes('http://') || rawInput.includes('https://') || rawInput.includes('code=') || rawInput.includes('token='))) {
+                try {
+                    const urlObj = new URL(rawInput.startsWith('http') ? rawInput : `http://localhost/${rawInput}`);
+                    code = urlObj.searchParams.get('code') || '';
+                    token = urlObj.searchParams.get('token') || urlObj.searchParams.get('access_token') || '';
+                    if (!token && urlObj.hash && urlObj.hash.includes('token=')) {
+                        const hashParams = new URLSearchParams(urlObj.hash.replace(/^#/, ''));
+                        token = hashParams.get('token') || hashParams.get('access_token') || '';
+                    }
+                } catch(e) {
+                    const codeMatch = rawInput.match(/code=([^&]+)/);
+                    if (codeMatch) code = decodeURIComponent(codeMatch[1]);
+                    const tokenMatch = rawInput.match(/token=([^&]+)/);
+                    if (tokenMatch) token = decodeURIComponent(tokenMatch[1]);
+                }
+            }
+
+            // Case C: User pasted JWT Access Token directly (e.g. eyJhbGciOi... or Bearer ey...)
+            if (!token && !code) {
+                if (rawInput.startsWith('Bearer ')) {
+                    token = rawInput.replace(/^Bearer\s+/, '').trim();
+                } else if (rawInput.startsWith('ey') && rawInput.length > 50 && rawInput.includes('.')) {
+                    token = rawInput;
+                } else {
+                    code = rawInput;
                 }
             }
 
@@ -1941,10 +1995,42 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.innerHTML = `<span class="material-symbols-outlined text-lg animate-spin">sync</span> Connecting Gmail...`;
             }
 
-            // Real backend code exchange
-            if (window.MewApiClient && window.MewApiClient.isOnline) {
+            // If we have a direct JWT token (from bridge page or copied JSON)
+            if (token && window.MewApiClient && window.MewApiClient.isOnline) {
                 try {
-                    const res = await fetch(`${window.MewApiClient.baseUrl}/auth/callback?code=${encodeURIComponent(key)}`);
+                    const res = await fetch(`${window.MewApiClient.baseUrl}/auth/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        localStorage.setItem('mew_jwt_token', token);
+                        window.MewApiClient.token = token;
+                        window.MewAppState.user.isAuthenticated = true;
+                        window.MewAppState.user.email = user.email || '';
+                        window.MewAppState.user.name = user.name || '';
+                        window.MewAppState.completedSteps.landing = true;
+                        localStorage.setItem('mew_session_active', '1');
+                        window.MewAppState.save();
+                        MewRouter.syncUI();
+
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<span class="material-symbols-outlined text-lg">check_circle</span> Connected!`;
+                        }
+
+                        alert(`✓ Connected to Google (${user.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                        setTimeout(() => MewRouter.navigateTo('parser'), 400);
+                        return;
+                    }
+                } catch(e) {
+                    console.warn('Direct token verification error:', e);
+                }
+            }
+
+            // Otherwise exchange Google authorization code with backend
+            if (code && window.MewApiClient && window.MewApiClient.isOnline) {
+                try {
+                    const res = await fetch(`${window.MewApiClient.baseUrl}/auth/callback?code=${encodeURIComponent(code)}&format=json`);
                     if (res.ok) {
                         const data = await res.json();
                         if (data.access_token) {
@@ -1956,7 +2042,6 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             window.MewAppState.user.name = data.user.name || '';
                         }
                         window.MewAppState.user.isAuthenticated = true;
-                        window.MewAppState.user.privateKey = key;
                         window.MewAppState.completedSteps.landing = true;
                         localStorage.setItem('mew_session_active', '1');
                         window.MewAppState.save();
@@ -1989,14 +2074,35 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     }
                     return;
                 }
-            } else {
-                alert(`Backend is currently offline or unreachable. Operating in local mode.`);
             }
+
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Verify & Authenticate</span>`;
+            }
+            alert('Please provide a valid Google Authorization Code or Access Key.');
         }
 
         async function checkOAuthCallback() {
+            // Check for ?token= or #token= on page load
+            let tokenFromUrl = '';
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
+            tokenFromUrl = urlParams.get('token') || urlParams.get('access_token') || '';
+
+            if (!tokenFromUrl && window.location.hash && window.location.hash.includes('token=')) {
+                const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+                tokenFromUrl = hashParams.get('token') || hashParams.get('access_token') || '';
+            }
+
+            if (tokenFromUrl) {
+                const keyInput = document.getElementById('auth-private-key');
+                if (keyInput) keyInput.value = tokenFromUrl;
+                window.history.replaceState({}, document.title, window.location.pathname);
+                await handleKeyLoginSubmit();
+                return;
+            }
+
             if (code) {
                 const keyInput = document.getElementById('auth-private-key');
                 if (keyInput) keyInput.value = code;
