@@ -1899,6 +1899,44 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             }
         };
 
+        // Global Toast Notification System
+        function showNotification(message, type = 'success', duration = 4000) {
+            let container = document.getElementById('mew-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'mew-toast-container';
+                container.className = 'fixed top-5 right-5 z-[99999] flex flex-col gap-2.5 max-w-md w-full pointer-events-none px-4';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            const bgClass = type === 'error' ? 'bg-rose-950/95 border-rose-500/50 text-rose-200' :
+                            type === 'warning' ? 'bg-amber-950/95 border-amber-500/50 text-amber-200' :
+                            'bg-slate-900/95 border-emerald-500/50 text-emerald-200';
+            const icon = type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'check_circle';
+
+            toast.className = `${bgClass} border rounded-xl p-4 shadow-2xl backdrop-blur-md pointer-events-auto flex items-start gap-3 transition-all duration-300 transform translate-y-[-10px] opacity-0 text-xs sm:text-sm`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined shrink-0 text-xl">${icon}</span>
+                <div class="flex-1 min-w-0 font-medium whitespace-pre-line">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white shrink-0">
+                    <span class="material-symbols-outlined text-base">close</span>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+
         // Real-time postMessage listener from Google OAuth popup / bridge window
         window.addEventListener('message', async (event) => {
             if (event.data && event.data.type === 'MEW_GOOGLE_AUTH_SUCCESS' && event.data.token) {
@@ -1915,7 +1953,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 window.MewAppState.save();
                 MewRouter.syncUI();
 
-                alert(`✓ Connected to Google (${user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                showNotification(`✓ Connected to Google (${user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is active.`, 'success');
                 setTimeout(() => MewRouter.navigateTo('parser'), 350);
             }
         });
@@ -1945,7 +1983,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
             let rawInput = keyInput ? keyInput.value.trim() : '';
 
             if (!rawInput) {
-                alert('Please paste your Google Authorization Code or Access Token.');
+                showNotification('Please paste your Google Authorization Code or Access Token.', 'warning');
                 return;
             }
 
@@ -2018,7 +2056,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             btn.innerHTML = `<span class="material-symbols-outlined text-lg">check_circle</span> Connected!`;
                         }
 
-                        alert(`✓ Connected to Google (${user.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                        showNotification(`✓ Connected to Google (${user.email || 'Gmail'}) successfully! Real Gmail drafting and sending is active.`, 'success');
                         setTimeout(() => MewRouter.navigateTo('parser'), 400);
                         return;
                     }
@@ -2053,12 +2091,12 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                             btn.innerHTML = `<span class="material-symbols-outlined text-lg">check_circle</span> Connected!`;
                         }
 
-                        alert(`✓ Connected to Google (${data.user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is now active.`);
+                        showNotification(`✓ Connected to Google (${data.user?.email || 'Gmail'}) successfully! Real Gmail drafting and sending is active.`, 'success');
                         setTimeout(() => MewRouter.navigateTo('parser'), 400);
                         return;
                     } else {
                         const err = await res.json().catch(() => ({}));
-                        alert(`Google Authentication Error: ${err.detail || 'Failed to exchange authorization code. Please generate a fresh code and try again.'}`);
+                        showNotification(`Google Authentication Error: ${err.detail || 'Failed to exchange authorization code. Please generate a fresh code and try again.'}`, 'error');
                         if (btn) {
                             btn.disabled = false;
                             btn.innerHTML = `<span>Verify & Authenticate</span>`;
@@ -2067,7 +2105,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     }
                 } catch (e) {
                     console.warn('Backend code verification error', e);
-                    alert(`Network error during Google authentication: ${e.message}`);
+                    showNotification(`Network error during Google authentication: ${e.message}`, 'error');
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = `<span>Verify & Authenticate</span>`;
@@ -2080,7 +2118,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                 btn.disabled = false;
                 btn.innerHTML = `<span>Verify & Authenticate</span>`;
             }
-            alert('Please provide a valid Google Authorization Code or Access Key.');
+            showNotification('Please provide a valid Google Authorization Code or Access Key.', 'warning');
         }
 
         async function checkOAuthCallback() {
@@ -3644,7 +3682,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (!res.ok) {
-                        alert(`Send Error: ${json.detail || 'Failed to dispatch email'}`);
+                        showNotification(`Send Error: ${json.detail || 'Failed to dispatch email'}`, 'error');
                         if (btn) {
                             btn.disabled = false;
                             btn.innerHTML = `<span>Send Outreach via Gmail</span> <span class="material-symbols-outlined text-[15px]">send</span>`;
@@ -3658,7 +3696,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             await markColdEmailSentForActiveJob();
             await new Promise(r => setTimeout(r, 850));
-            alert(`Gmail Outreach Sent Successfully!\n\nTo: ${activeHrName} <${activeHrEmail}>\nSubject: ${subject}`);
+            showNotification(`✓ Gmail Outreach Sent Successfully!\nTo: ${activeHrName} <${activeHrEmail}>\nSubject: ${subject}`, 'success');
 
             if (btn) {
                 btn.disabled = false;
@@ -3976,7 +4014,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (!res.ok) {
-                        alert(`Send Error: ${json.detail || 'Failed to dispatch email'}`);
+                        showNotification(`Send Error: ${json.detail || 'Failed to dispatch email'}`, 'error');
                         if (btn) {
                             btn.disabled = false;
                             btn.innerHTML = `<span>Send Outreach via Gmail</span> <span class="material-symbols-outlined text-[15px]">send</span>`;
@@ -3988,7 +4026,7 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
 
             await markColdEmailSentForActiveJob();
             await new Promise(r => setTimeout(r, 650));
-            alert(`Gmail Outreach Sent Successfully!\n\nTo: ${activeHrName} <${activeHrEmail}>\nSubject: ${subject}`);
+            showNotification(`✓ Gmail Outreach Sent Successfully!\nTo: ${activeHrName} <${activeHrEmail}>\nSubject: ${subject}`, 'success');
 
             if (btn) {
                 btn.disabled = false;
@@ -4025,15 +4063,15 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        alert(json.message || `✓ Cold email saved directly as a draft!`);
+                        showNotification(json.message || `✓ Cold email saved directly as a draft!`, 'success');
                     } else {
-                        alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
+                        showNotification(`Draft Error: ${json.detail || 'Failed to save draft'}`, 'error');
                     }
                 } catch (e) {
-                    alert(`Error saving draft: ${e.message}`);
+                    showNotification(`Error saving draft: ${e.message}`, 'error');
                 }
             } else {
-                alert(`✓ Offline Mode: Cold email draft saved locally for ${activeCompany}!`);
+                showNotification(`✓ Offline Mode: Cold email draft saved locally for ${activeCompany}!`, 'warning');
             }
 
             if (btn) {
@@ -4068,15 +4106,15 @@ alex@mewai.dev | +1 (555) 019-2834</textarea>
                     });
                     const json = await res.json();
                     if (res.ok) {
-                        alert(json.message || `✓ Cold email saved directly as a draft!`);
+                        showNotification(json.message || `✓ Cold email saved directly as a draft!`, 'success');
                     } else {
-                        alert(`Draft Error: ${json.detail || 'Failed to save draft'}`);
+                        showNotification(`Draft Error: ${json.detail || 'Failed to save draft'}`, 'error');
                     }
                 } catch (e) {
-                    alert(`Error saving draft: ${e.message}`);
+                    showNotification(`Error saving draft: ${e.message}`, 'error');
                 }
             } else {
-                alert(`✓ Offline Mode: Cold email draft saved locally for ${activeCompany}!`);
+                showNotification(`✓ Offline Mode: Cold email draft saved locally for ${activeCompany}!`, 'warning');
             }
 
             if (btn) {
