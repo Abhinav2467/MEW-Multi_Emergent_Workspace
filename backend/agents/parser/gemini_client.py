@@ -125,7 +125,7 @@ class GeminiParseClient:
         self,
         *,
         api_key: str | None,
-        model: str = "gemini-flash-latest",
+        model: str = "gemini-1.5-flash",
         client: Any | None = None,
     ) -> None:
         if client is None and not api_key:
@@ -180,6 +180,7 @@ class GeminiParseClient:
         keys_to_try = [
             k.strip() for k in [
                 self.api_key,
+                settings.gemini_parser_key,
                 settings.gemini_backup_key,
                 settings.gemini_email_key,
                 settings.gemini_api_key,
@@ -188,21 +189,40 @@ class GeminiParseClient:
         ]
         unique_keys = list(dict.fromkeys(keys_to_try))
 
+        models_to_try = [
+            self.model,
+            "gemini-1.5-flash",
+            "gemini-2.0-flash",
+            "gemini-2.5-flash",
+            "gemini-1.5-pro",
+        ]
+        unique_models = list(dict.fromkeys([m for m in models_to_try if m]))
+
         last_exc = None
         for key in unique_keys:
             try:
                 client = self._build_client(key)
-                response = client.models.generate_content(
-                    model=self.model,
-                    contents=prompt,
-                    config={
-                        "response_mime_type": "application/json",
-                        "response_json_schema": GeminiProfileOut.model_json_schema(),
-                    },
-                )
-                text = getattr(response, "text", None)
-                if text:
-                    return str(text)
+                for model_name in unique_models:
+                    try:
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=prompt,
+                            config={
+                                "response_mime_type": "application/json",
+                                "response_json_schema": GeminiProfileOut.model_json_schema(),
+                            },
+                        )
+                        text = getattr(response, "text", None)
+                        if text:
+                            return str(text)
+                    except Exception as model_exc:
+                        last_exc = model_exc
+                        # If 404/NotFound or 503 on model name, try next model candidate
+                        err_str = str(model_exc).lower()
+                        if "404" in err_str or "not_found" in err_str or "notfound" in err_str or "503" in err_str or "unavailable" in err_str:
+                            logger.info("Model %s failed with %s, attempting next model candidate...", model_name, model_exc)
+                            continue
+                        raise model_exc
             except Exception as exc:
                 last_exc = exc
                 masked = f"...{key[-4:]}" if len(key) >= 4 else "***"
